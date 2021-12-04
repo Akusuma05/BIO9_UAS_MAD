@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.uas_mad.R;
 import com.google.android.material.textfield.TextInputLayout;
@@ -26,6 +29,7 @@ public class RegisterFragment extends Fragment {
     private TextView btn_login_register;
     private TextInputLayout input_confirm_password, input_password_register, input_username_register, input_email_register;
     private Button btn_register;
+    private RegisterViewModel registerViewModel;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -85,6 +89,33 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
+            }
+        });
+
+        registerViewModel = new ViewModelProvider(getActivity()).get(RegisterViewModel.class);
+
+        btn_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!input_username_register.getEditText().getText().toString().isEmpty()
+                        && !input_email_register.getEditText().getText().toString().isEmpty()
+                        && !input_password_register.getEditText().getText().toString().isEmpty()
+                        && !input_confirm_password.getEditText().getText().toString().isEmpty()){
+                    String name = input_username_register.getEditText().getText().toString().trim();
+                    String email = input_email_register.getEditText().getText().toString().trim();
+                    String pass = input_password_register.getEditText().getText().toString().trim();
+                    String cpass = input_confirm_password.getEditText().getText().toString().trim();
+                    registerViewModel.register(name, email, pass, cpass).observe(requireActivity(), registerResponse -> {
+                        if (registerResponse != null){
+                            Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
+                            Toast.makeText(requireActivity(), "Register Success", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(requireActivity(), "Regsiter Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(requireActivity(), "All field must not empty", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.example.uas_mad.retrofit;
 
 import com.example.uas_mad.helper.Const;
+import com.example.uas_mad.model.RegisterResponse;
 import com.example.uas_mad.model.TokenResponse;
 
 import okhttp3.OkHttpClient;
@@ -53,6 +54,10 @@ public class RetrofitService {
 
     public Call<TokenResponse> login(String email, String password){
         return api.login(email, password);
+    }
+
+    public Call<RegisterResponse> register(String name, String email, String password, String password_confirmation){
+        return api.register(name, email, password, password_confirmation);
     }
 
 }

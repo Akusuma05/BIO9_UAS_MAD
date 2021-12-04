@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.uas_mad.model.RegisterResponse;
 import com.example.uas_mad.model.TokenResponse;
 import com.example.uas_mad.retrofit.RetrofitService;
 
@@ -54,5 +55,31 @@ public class AuthRepository {
         });
 
         return tokenResponse;
+    }
+
+    public MutableLiveData<RegisterResponse> register (String name, String email, String password, String password_confirmation) {
+        MutableLiveData<RegisterResponse> registerResponse = new MutableLiveData<>();
+        apiService.register(name, email, password, password_confirmation).enqueue(new Callback<RegisterResponse>() {
+            @Override
+            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                if (response.isSuccessful()){
+                    Log.d(TAG, "onResponse : "+response.code());
+                    if (response.code() == 200){
+                        if (response.body() != null){
+                            Log.d(TAG, "onResponse : " + response.body());
+                            registerResponse.postValue(response.body());
+                        }
+                    }else{
+                        Log.d(TAG, "onResponse : "+ response.code());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                Log.e(TAG, "onFailure : " +t.getMessage());
+            }
+        });
+        return registerResponse;
     }
 }
