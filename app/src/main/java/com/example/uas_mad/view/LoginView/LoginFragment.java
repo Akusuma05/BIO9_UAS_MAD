@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.uas_mad.R;
 import com.example.uas_mad.helper.SharedPreferenceHelper;
@@ -92,6 +95,30 @@ public class LoginFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_registerFragment);
             }
         });
+
+        loginViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
+        helper = SharedPreferenceHelper.getInstance(requireActivity());
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!email_login.getEditText().getText().toString().isEmpty() && !password_login.getEditText().getText().toString().isEmpty()){
+                    String email = email_login.getEditText().getText().toString().trim();
+                    String pass = password_login.getEditText().getText().toString().trim();
+                    loginViewModel.login(email, pass).observe(requireActivity(), tokenResponse -> {
+                        if (tokenResponse != null){
+                            helper.saveAccessToken(tokenResponse.getAuthorization());
+                            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_game_Fragment);
+                            Toast.makeText(requireActivity(), "Login Success", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(requireActivity(), "Login Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(requireActivity(), "Insert Email and password", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     //Function Deklarasi
