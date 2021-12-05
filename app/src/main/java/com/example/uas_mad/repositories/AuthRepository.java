@@ -44,6 +44,7 @@ public class AuthRepository {
                         }
                     }
                 }else{
+                    tokenResponse.setValue(null);
                     Log.d(TAG, "onResponse: "+response.code());
                 }
             }
@@ -72,6 +73,9 @@ public class AuthRepository {
                     }else{
                         Log.d(TAG, "onResponse : "+ response.code());
                     }
+                }else{
+                    registerResponse.setValue(null);
+                    Log.d(TAG, "onResponse: "+response.code());
                 }
             }
 

@@ -3,6 +3,7 @@ package com.example.uas_mad.retrofit;
 import com.example.uas_mad.helper.Const;
 import com.example.uas_mad.model.RegisterResponse;
 import com.example.uas_mad.model.TokenResponse;
+import com.google.gson.JsonObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -60,4 +61,5 @@ public class RetrofitService {
         return api.register(name, email, password, password_confirmation);
     }
 
+    public Call<JsonObject> logout() {return api.logout();}
 }

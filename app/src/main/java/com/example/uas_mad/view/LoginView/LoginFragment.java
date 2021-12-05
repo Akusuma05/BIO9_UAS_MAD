@@ -106,9 +106,10 @@ public class LoginFragment extends Fragment {
                     String pass = password_login.getEditText().getText().toString().trim();
                     loginViewModel.login(email, pass).observe(requireActivity(), tokenResponse -> {
                         if (tokenResponse != null){
-                            helper.saveAccessToken(tokenResponse.getAuthorization());
-                            Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_game_Fragment);
-                            Toast.makeText(requireActivity(), "Login Success", Toast.LENGTH_SHORT).show();
+                                helper.saveAccessToken(tokenResponse.getAuthorization());
+                                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_game_Fragment);
+                                Toast.makeText(requireActivity(), "Login Success", Toast.LENGTH_SHORT).show();
+
                         }else{
                             Toast.makeText(requireActivity(), "Login Failed", Toast.LENGTH_SHORT).show();
                         }

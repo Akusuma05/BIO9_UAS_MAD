@@ -2,6 +2,7 @@ package com.example.uas_mad.retrofit;
 
 import com.example.uas_mad.model.RegisterResponse;
 import com.example.uas_mad.model.TokenResponse;
+import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -18,4 +19,7 @@ public interface ApiEndPoints {
     Call<RegisterResponse> register(@Field("name") String name, @Field("email") String email,
                                     @Field("password") String password,
                                     @Field("password_confirmation") String password_confirmation);
+
+    @POST("logout")
+    Call<JsonObject> logout();
 }

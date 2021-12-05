@@ -2,13 +2,21 @@ package com.example.uas_mad.view.GameView;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.uas_mad.R;
+import com.example.uas_mad.helper.SharedPreferenceHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +24,12 @@ import com.example.uas_mad.R;
  * create an instance of this fragment.
  */
 public class Game_Fragment extends Fragment {
+
+    private Button btn_logout;
+
+    private GameViewModel gameViewModel;
+    private SharedPreferenceHelper helper;
+    private static final String TAG = "ProfileFragment";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -62,5 +76,38 @@ public class Game_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game_, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //Deklarasi
+        InitView();
+
+        helper = SharedPreferenceHelper.getInstance(requireActivity());
+        gameViewModel = new ViewModelProvider(getActivity()).get(GameViewModel.class);
+        gameViewModel.init(helper.getAccessToken());
+
+        //Logout
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.getId() == R.id.btn_logout){
+                    gameViewModel.logout().observe(requireActivity(), s ->{
+                        if (!s.isEmpty()) {
+                            helper.clearPref();
+                            Navigation.findNavController(view).navigate(R.id.action_game_Fragment_to_loginFragment);
+                            Toast.makeText(requireActivity(), s, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+
+    }
+
+    //Fungsi Deklarasi
+    private void InitView() {
+        btn_logout = getActivity().findViewById(R.id.btn_logout);
     }
 }

@@ -30,5 +30,9 @@
         android:id="@+id/game_Fragment"
         android:name="com.example.uas_mad.view.GameView.Game_Fragment"
         android:label="fragment_game_"
-        tools:layout="@layout/fragment_game_" />
+        tools:layout="@layout/fragment_game_" >
+        <action
+            android:id="@+id/action_game_Fragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
 </navigation>

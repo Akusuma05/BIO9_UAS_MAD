@@ -105,12 +105,13 @@ public class RegisterFragment extends Fragment {
                     String email = input_email_register.getEditText().getText().toString().trim();
                     String pass = input_password_register.getEditText().getText().toString().trim();
                     String cpass = input_confirm_password.getEditText().getText().toString().trim();
+
                     registerViewModel.register(name, email, pass, cpass).observe(requireActivity(), registerResponse -> {
                         if (registerResponse != null){
                             Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
                             Toast.makeText(requireActivity(), "Register Success", Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(requireActivity(), "Regsiter Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireActivity(), "Register Failed", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }else{
