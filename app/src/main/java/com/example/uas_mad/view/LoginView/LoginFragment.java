@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.uas_mad.R;
 import com.example.uas_mad.helper.SharedPreferenceHelper;
+import com.example.uas_mad.model.Profile;
 import com.google.android.material.textfield.TextInputLayout;
 
 /**
@@ -106,8 +107,11 @@ public class LoginFragment extends Fragment {
                     String pass = password_login.getEditText().getText().toString().trim();
                     loginViewModel.login(email, pass).observe(requireActivity(), tokenResponse -> {
                         if (tokenResponse != null){
+
+//                                Bundle bundle = new Bundle();
+//                                bundle.putInt("Student_id", );
                                 helper.saveAccessToken(tokenResponse.getAuthorization());
-                                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_game_Fragment);
+                                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_menuFragment);
                                 Toast.makeText(requireActivity(), "Login Success", Toast.LENGTH_SHORT).show();
 
                         }else{

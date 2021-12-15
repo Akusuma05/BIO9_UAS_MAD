@@ -14,8 +14,8 @@
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
         <action
-            android:id="@+id/action_loginFragment_to_game_Fragment"
-            app:destination="@id/game_Fragment" />
+            android:id="@+id/action_loginFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -27,12 +27,44 @@
             app:destination="@id/loginFragment" />
     </fragment>
     <fragment
-        android:id="@+id/game_Fragment"
-        android:name="com.example.uas_mad.view.GameView.Game_Fragment"
-        android:label="fragment_game_"
-        tools:layout="@layout/fragment_game_" >
+        android:id="@+id/gameFragment"
+        android:name="com.example.uas_mad.view.GameView.GameFragment"
+        android:label="fragment_game"
+        tools:layout="@layout/fragment_game" >
         <action
-            android:id="@+id/action_game_Fragment_to_loginFragment"
+            android:id="@+id/action_gameFragment_to_leaderboardFragment"
+            app:destination="@id/leaderboardFragment" />
+        <argument
+            android:name="Student_id"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="com.example.uas_mad.view.Leaderboard.LeaderboardFragment"
+        android:label="fragment_leaderboard"
+        tools:layout="@layout/fragment_leaderboard" >
+        <action
+            android:id="@+id/action_leaderboardFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.uas_mad.view.MenuView.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menuFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_leaderboardFragment"
+            app:destination="@id/leaderboardFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <argument
+            android:name="Student_id"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

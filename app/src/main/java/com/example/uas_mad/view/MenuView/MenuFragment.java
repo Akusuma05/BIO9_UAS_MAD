@@ -1,35 +1,42 @@
-package com.example.uas_mad.view.GameView;
+package com.example.uas_mad.view.MenuView;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uas_mad.R;
 import com.example.uas_mad.helper.SharedPreferenceHelper;
+import com.example.uas_mad.model.Profile;
+import com.example.uas_mad.view.GameView.GameViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Game_Fragment#newInstance} factory method to
+ * Use the {@link MenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Game_Fragment extends Fragment {
+public class MenuFragment extends Fragment {
 
-    private Button btn_logout;
+    private Button btn_logout, btn_play, btn_leaderboard;
 
-    private GameViewModel gameViewModel;
+    private MenuViewModel menuViewModel;
     private SharedPreferenceHelper helper;
-    private static final String TAG = "ProfileFragment";
+    private static final String TAG = "Menu Fragment";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,7 +47,7 @@ public class Game_Fragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Game_Fragment() {
+    public MenuFragment() {
         // Required empty public constructor
     }
 
@@ -53,8 +60,8 @@ public class Game_Fragment extends Fragment {
      * @return A new instance of fragment Game_Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Game_Fragment newInstance(String param1, String param2) {
-        Game_Fragment fragment = new Game_Fragment();
+    public static MenuFragment newInstance(String param1, String param2) {
+        MenuFragment fragment = new MenuFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,7 +82,7 @@ public class Game_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game_, container, false);
+        return inflater.inflate(R.layout.fragment_menu, container, false);
     }
 
     @Override
@@ -85,18 +92,21 @@ public class Game_Fragment extends Fragment {
         InitView();
 
         helper = SharedPreferenceHelper.getInstance(requireActivity());
-        gameViewModel = new ViewModelProvider(getActivity()).get(GameViewModel.class);
-        gameViewModel.init(helper.getAccessToken());
+        menuViewModel = new ViewModelProvider(getActivity()).get(MenuViewModel.class);
+        menuViewModel.init(helper.getAccessToken());
+        menuViewModel.getStudentData();
+        menuViewModel.getResultStudentData().observe(getActivity(), showprofile);
+
 
         //Logout
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (view.getId() == R.id.btn_logout){
-                    gameViewModel.logout().observe(requireActivity(), s ->{
+                    menuViewModel.logout().observe(requireActivity(), s ->{
                         if (!s.isEmpty()) {
                             helper.clearPref();
-                            Navigation.findNavController(view).navigate(R.id.action_game_Fragment_to_loginFragment);
+                            Navigation.findNavController(view).navigate(R.id.action_menuFragment_to_loginFragment);
                             Toast.makeText(requireActivity(), s, Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -109,5 +119,22 @@ public class Game_Fragment extends Fragment {
     //Fungsi Deklarasi
     private void InitView() {
         btn_logout = getActivity().findViewById(R.id.btn_logout);
+        btn_play = getActivity().findViewById(R.id.btn_play);
+        btn_leaderboard = getActivity().findViewById(R.id.btn_leaderboard);
     }
+
+    //Button Play Ditekan
+    private Observer<Profile> showprofile = new Observer<Profile>() {
+        @Override
+        public void onChanged(Profile profile) {
+            btn_play.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("Student_id", profile.getId());
+                    Navigation.findNavController(view).navigate(R.id.action_menuFragment_to_gameFragment, bundle);
+                }
+            });
+        }
+    };
 }
