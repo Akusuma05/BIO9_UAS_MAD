@@ -99,4 +99,7 @@ public class RetrofitService {
 
     //Terjawab
     public Call<PertanyaanTerjawab> getTerjawab(){return api.getTerjawab();}
+
+    //Create Game data
+    public Call<GameData.Gamedata> createGamedata(GameData.Gamedata gamedata){return api.createGamedata(gamedata);}
 }

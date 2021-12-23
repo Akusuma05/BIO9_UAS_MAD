@@ -60,4 +60,23 @@ public class GameDataRepository {
         return usergamedata;
     }
 
+    //Create Game Data
+    public MutableLiveData<GameData.Gamedata> createGameData(GameData.Gamedata gamedata){
+        final MutableLiveData<GameData.Gamedata> listAddGamedata = new MutableLiveData<>();
+
+        apiService.createGamedata(gamedata).enqueue(new Callback<GameData.Gamedata>() {
+            @Override
+            public void onResponse(Call<GameData.Gamedata> call, Response<GameData.Gamedata> response) {
+                Log.d(TAG, "OnResponse: "+response.body());
+                listAddGamedata.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<GameData.Gamedata> call, Throwable t) {
+                Log.e(TAG, "OnFailure " + t.getMessage());
+            }
+        });
+        return listAddGamedata;
+    }
+
 }

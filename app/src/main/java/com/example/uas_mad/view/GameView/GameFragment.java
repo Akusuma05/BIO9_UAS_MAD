@@ -8,11 +8,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.uas_mad.R;
 import com.example.uas_mad.helper.SharedPreferenceHelper;
@@ -24,8 +29,8 @@ import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
 import com.example.uas_mad.model.PertanyaanTerjawab;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,8 +38,11 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class GameFragment extends Fragment {
-    public TextView text_waktu, text_money, text_damage;
+    public TextView text_waktu, text_money, text_damage, text_pertanyaan;
     public Button btn_jawaban1, btn_jawaban2, btn_jawaban3, btn_jawaban4;
+    private ProgressBar health_bar_monster;
+    private RatingBar health_bar_user;
+    private ImageView img_user, img_monster;
 
     private GameViewModel gameViewModel;
     private SharedPreferenceHelper helper;
@@ -44,6 +52,9 @@ public class GameFragment extends Fragment {
     private List<Monster.Data> listMonster;
     private List<PertanyaanTerjawab.Data> listTerjawab;
     private List<ItemTerbeli.Data> listTerbeli;
+    public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100;
+    boolean button_pressed = false;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -102,6 +113,15 @@ public class GameFragment extends Fragment {
         gameViewModel = new ViewModelProvider(getActivity()).get(GameViewModel.class);
         gameViewModel.init(helper.getAccessToken());
 
+//        GameData.Gamedata gamedata = addGamedata(3, 1, 1 , 1, 1, 1, 1);
+//        gameViewModel.createGamedata(gamedata).observe(requireActivity(), gamedata1 -> {
+//            if (gamedata1 != null){
+//                Toast.makeText(requireActivity(), "Add Gamedata Success", Toast.LENGTH_SHORT).show();
+//            }else{
+//                Toast.makeText(requireActivity(), "Add Gamedata Failed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
         //Game Data
         int studentid = getArguments().getInt("Student_id");
         gameViewModel.getGamedata(studentid);
@@ -138,11 +158,18 @@ public class GameFragment extends Fragment {
         text_damage = getActivity().findViewById(R.id.text_damage);
         text_money = getActivity().findViewById(R.id.text_money);
         text_waktu = getActivity().findViewById(R.id.text_waktu);
+        text_pertanyaan = getActivity().findViewById(R.id.text_pertanyaan);
+
+        health_bar_monster = getActivity().findViewById(R.id.health_bar_monster);
+        health_bar_user = getActivity().findViewById(R.id.health_bar_user);
 
         btn_jawaban1 = getActivity().findViewById(R.id.btn_jawaban1);
         btn_jawaban2 = getActivity().findViewById(R.id.btn_jawaban2);
         btn_jawaban3 = getActivity().findViewById(R.id.btn_jawaban3);
         btn_jawaban4 = getActivity().findViewById(R.id.btn_jawaban4);
+
+        img_monster = getActivity().findViewById(R.id.img_monster);
+        img_user = getActivity().findViewById(R.id.img_user);
     }
 
     //Observer GameData
@@ -152,9 +179,15 @@ public class GameFragment extends Fragment {
             //Display Waktu Duit sama Damage
             listGamedata = gameData.getGamedata();
 
-//            text_damage.setText(String.valueOf(listGamedata.get(0).getTotal_damage()));
-//            text_waktu.setText(String.valueOf(listGamedata.get(0).getTime_left()));
-//            text_money.setText(String.valueOf(listGamedata.get(0).getMoney()));
+            text_damage.setText(String.valueOf(listGamedata.get(0).getTotal_damage()));
+            text_waktu.setText(String.valueOf(listGamedata.get(0).getTime_left()));
+            text_money.setText(String.valueOf(listGamedata.get(0).getMoney()));
+
+            health_user = listGamedata.get(0).getHealth_left();
+            current_damage = listGamedata.get(0).getCurrent_damage();
+
+            health_bar_monster.setProgress(100);
+            health_bar_user.setRating(health_user);
 
         }
     };
@@ -166,10 +199,938 @@ public class GameFragment extends Fragment {
             //Button Jawaban
             listPertanyaan = pertanyaan.getData();
 
-//            btn_jawaban1.setText(listPertanyaan.get(0).getJawaban_benar());
-//            btn_jawaban2.setText(listPertanyaan.get(0).getJawaban_salah1());
-            btn_jawaban3.setText(listPertanyaan.get(0).getJawaban_salah2());
-            btn_jawaban4.setText(listPertanyaan.get(0).getJawaban_salah3());
+            int min = 0;
+            int max = 1;
+            random = new Random().nextInt((max - min) + 1) + min;
+
+            text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
+
+            int rand = new Random().nextInt((4 - 1) + 1) + 1;
+
+            if (rand == 1) {
+                btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_benar());
+                btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah1());
+                btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+            } else if (rand == 2) {
+                btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_benar());
+                btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+            } else if (rand == 3) {
+                btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_benar());
+                btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+            } else if (rand == 4) {
+                btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah3());
+                btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_benar());
+            }
+
+            btn_jawaban1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(btn_jawaban1.getText() == listPertanyaan.get(random).getJawaban_benar()) {
+                        Toast.makeText(getContext(), "jawaban 1 benar", Toast.LENGTH_SHORT).show();
+                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
+                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(current_damage), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
+                        current_health_monster = current_health_monster - current_damage;
+
+                        total_damage += current_damage;
+                        text_damage.setText(String.valueOf(total_damage));
+
+                        img_user.setImageResource(R.drawable.wizard_attack);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                img_user.setImageResource(R.drawable.wizard_idle);
+                            }
+                        }, 800);
+
+                        if(current_health_monster == 0){
+                            if(monster == 1) {
+                                img_monster.setImageResource(R.drawable.monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 2200);
+                            }else if(monster == 2){
+                                img_monster.setImageResource(R.drawable.eyeball_monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }else if(monster == 3){
+                                img_monster.setImageResource(R.drawable.scifi_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1200);
+                            }else if(monster == 4){
+                                img_monster.setImageResource(R.drawable.trash_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1100);
+                            }else if(monster == 5){
+                                img_monster.setImageResource(R.drawable.fire_worm_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }
+                            health_monster = health_monster * 2;
+                            current_health_monster = health_monster;
+                            health_bar_monster.setProgress(100);
+                        }
+                    }else{
+                        Toast.makeText(getContext(), "jawaban 1 salah", Toast.LENGTH_SHORT).show();
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+
+                        if(monster == 1) {
+                            img_monster.setImageResource(R.drawable.monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.monster_idle);
+                                }
+                            }, 1500);
+                        }else if(monster == 2){
+                            img_monster.setImageResource(R.drawable.eyeball_monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                }
+                            }, 600);
+                        }else if(monster == 3){
+                            img_monster.setImageResource(R.drawable.scifi_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                }
+                            }, 1180);
+                        }else if(monster == 4){
+                            img_monster.setImageResource(R.drawable.trash_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                }
+                            }, 920);
+                        }else if(monster == 5){
+                            img_monster.setImageResource(R.drawable.fire_worm_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                }
+                            }, 1700);
+                        }
+
+                        if(health_user == 0){
+                            img_user.setImageResource(R.drawable.wizard_death);
+                            final Handler handler2 = new Handler();
+                            handler2.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_user.setImageResource(R.drawable.wizard_death_png);
+                                }
+                            }, 700);
+                        }
+                    }
+                    button_pressed = true;
+                    if(button_pressed = true) {
+                        button_pressed = false;
+                        int min = 0;
+                        int max = 1;
+                        random = new Random().nextInt((max - min) + 1) + min;
+
+                        text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
+
+                        int rand = new Random().nextInt((4 - 1) + 1) + 1;
+
+                        if (rand == 1) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 2) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 3) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 4) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah3());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_benar());
+                        }
+                    }
+                }
+            });
+
+            btn_jawaban2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(btn_jawaban2.getText() == listPertanyaan.get(random).getJawaban_benar()) {
+                        Toast.makeText(getContext(), "jawaban 2 benar", Toast.LENGTH_SHORT).show();
+                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
+                        current_health_monster = current_health_monster - current_damage;
+
+                        total_damage += current_damage;
+                        text_damage.setText(String.valueOf(total_damage));
+
+                        img_user.setImageResource(R.drawable.wizard_attack);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                img_user.setImageResource(R.drawable.wizard_idle);
+                            }
+                        }, 800);
+
+                        if(current_health_monster == 0){
+                            if(monster == 1) {
+                                img_monster.setImageResource(R.drawable.monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 2200);
+                            }else if(monster == 2){
+                                img_monster.setImageResource(R.drawable.eyeball_monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }else if(monster == 3){
+                                img_monster.setImageResource(R.drawable.scifi_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1200);
+                            }else if(monster == 4){
+                                img_monster.setImageResource(R.drawable.trash_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1100);
+                            }else if(monster == 5){
+                                img_monster.setImageResource(R.drawable.fire_worm_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }
+                            health_monster = health_monster * 2;
+                            current_health_monster = health_monster;
+                            health_bar_monster.setProgress(100);
+                        }
+                    }else{
+                        Toast.makeText(getContext(), "jawaban 2 salah", Toast.LENGTH_SHORT).show();
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+
+                        if(monster == 1) {
+                            img_monster.setImageResource(R.drawable.monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.monster_idle);
+                                }
+                            }, 1500);
+                        }else if(monster == 2){
+                            img_monster.setImageResource(R.drawable.eyeball_monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                }
+                            }, 600);
+                        }else if(monster == 3){
+                            img_monster.setImageResource(R.drawable.scifi_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                }
+                            }, 1180);
+                        }else if(monster == 4){
+                            img_monster.setImageResource(R.drawable.trash_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                }
+                            }, 920);
+                        }else if(monster == 5){
+                            img_monster.setImageResource(R.drawable.fire_worm_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                }
+                            }, 1700);
+                        }
+
+                        if(health_user == 0){
+                            img_user.setImageResource(R.drawable.wizard_death);
+                            final Handler handler2 = new Handler();
+                            handler2.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_user.setImageResource(R.drawable.wizard_death_png);
+                                }
+                            }, 700);
+                        }
+                    }
+                    button_pressed = true;
+                    if(button_pressed = true) {
+                        button_pressed = false;
+                        int min = 0;
+                        int max = 1;
+                        random = new Random().nextInt((max - min) + 1) + min;
+
+                        text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
+
+                        int rand = new Random().nextInt((4 - 1) + 1) + 1;
+
+                        if (rand == 1) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 2) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 3) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 4) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah3());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_benar());
+                        }
+                    }
+                }
+            });
+
+            btn_jawaban3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(btn_jawaban3.getText() == listPertanyaan.get(random).getJawaban_benar()) {
+                        Toast.makeText(getContext(), "jawaban 3 benar", Toast.LENGTH_SHORT).show();
+                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
+                        current_health_monster = current_health_monster - current_damage;
+
+                        total_damage += current_damage;
+                        text_damage.setText(String.valueOf(total_damage));
+
+                        img_user.setImageResource(R.drawable.wizard_attack);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                img_user.setImageResource(R.drawable.wizard_idle);
+                            }
+                        }, 800);
+
+                        if(current_health_monster == 0){
+                            if(monster == 1) {
+                                img_monster.setImageResource(R.drawable.monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 2200);
+                            }else if(monster == 2){
+                                img_monster.setImageResource(R.drawable.eyeball_monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }else if(monster == 3){
+                                img_monster.setImageResource(R.drawable.scifi_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1200);
+                            }else if(monster == 4){
+                                img_monster.setImageResource(R.drawable.trash_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1100);
+                            }else if(monster == 5){
+                                img_monster.setImageResource(R.drawable.fire_worm_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }
+                            health_monster = health_monster * 2;
+                            current_health_monster = health_monster;
+                            health_bar_monster.setProgress(100);
+                        }
+                    }else{
+                        Toast.makeText(getContext(), "jawaban 3 salah", Toast.LENGTH_SHORT).show();
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+
+                        if(monster == 1) {
+                            img_monster.setImageResource(R.drawable.monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.monster_idle);
+                                }
+                            }, 1500);
+                        }else if(monster == 2){
+                            img_monster.setImageResource(R.drawable.eyeball_monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                }
+                            }, 600);
+                        }else if(monster == 3){
+                            img_monster.setImageResource(R.drawable.scifi_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                }
+                            }, 1180);
+                        }else if(monster == 4){
+                            img_monster.setImageResource(R.drawable.trash_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                }
+                            }, 920);
+                        }else if(monster == 5){
+                            img_monster.setImageResource(R.drawable.fire_worm_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                }
+                            }, 1700);
+                        }
+
+                        if(health_user == 0){
+                            img_user.setImageResource(R.drawable.wizard_death);
+                            final Handler handler2 = new Handler();
+                            handler2.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_user.setImageResource(R.drawable.wizard_death_png);
+                                }
+                            }, 700);
+                        }
+                    }
+                    button_pressed = true;
+                    if(button_pressed = true) {
+                        button_pressed = false;
+                        int min = 0;
+                        int max = 1;
+                        random = new Random().nextInt((max - min) + 1) + min;
+
+                        text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
+
+                        int rand = new Random().nextInt((4 - 1) + 1) + 1;
+
+                        if (rand == 1) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 2) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 3) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 4) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah3());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_benar());
+                        }
+                    }
+                }
+            });
+
+            btn_jawaban4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(btn_jawaban4.getText() == listPertanyaan.get(random).getJawaban_benar()) {
+                        Toast.makeText(getContext(), "jawaban 4 benar", Toast.LENGTH_SHORT).show();
+                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
+                        current_health_monster = current_health_monster - current_damage;
+
+                        total_damage += current_damage;
+                        text_damage.setText(String.valueOf(total_damage));
+
+                        img_user.setImageResource(R.drawable.wizard_attack);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                img_user.setImageResource(R.drawable.wizard_idle);
+                            }
+                        }, 800);
+
+                        if(current_health_monster == 0){
+                            if(monster == 1) {
+                                img_monster.setImageResource(R.drawable.monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 2200);
+                            }else if(monster == 2){
+                                img_monster.setImageResource(R.drawable.eyeball_monster_death);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }else if(monster == 3){
+                                img_monster.setImageResource(R.drawable.scifi_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1200);
+                            }else if(monster == 4){
+                                img_monster.setImageResource(R.drawable.trash_monster_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 1100);
+                            }else if(monster == 5){
+                                img_monster.setImageResource(R.drawable.fire_worm_death_v2);
+                                final Handler handler2 = new Handler();
+                                handler2.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        monster = new Random().nextInt((4 - 1) + 1) + 1;
+                                        if(monster == 1){
+                                            img_monster.setImageResource(R.drawable.monster_idle);
+                                        }else if(monster == 2){
+                                            img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                        }else if(monster == 3){
+                                            img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                        }else if(monster == 4){
+                                            img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                        }else if(monster == 5){
+                                            img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                        }
+                                    }
+                                }, 900);
+                            }
+                            health_monster = health_monster * 2;
+                            current_health_monster = health_monster;
+                            health_bar_monster.setProgress(100);
+                        }
+                    }else{
+                        Toast.makeText(getContext(), "jawaban 4 salah", Toast.LENGTH_SHORT).show();
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+
+                        if(monster == 1) {
+                            img_monster.setImageResource(R.drawable.monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.monster_idle);
+                                }
+                            }, 1500);
+                        }else if(monster == 2){
+                            img_monster.setImageResource(R.drawable.eyeball_monster_attack);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.eyeball_monster_idle);
+                                }
+                            }, 600);
+                        }else if(monster == 3){
+                            img_monster.setImageResource(R.drawable.scifi_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.scifi_monster_idle_v2);
+                                }
+                            }, 1180);
+                        }else if(monster == 4){
+                            img_monster.setImageResource(R.drawable.trash_monster_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.trash_monster_idle_v2);
+                                }
+                            }, 920);
+                        }else if(monster == 5){
+                            img_monster.setImageResource(R.drawable.fire_worm_attack_v2);
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_monster.setImageResource(R.drawable.fire_worm_idle_v2);
+                                }
+                            }, 1700);
+                        }
+
+                        if(health_user == 0){
+                            img_user.setImageResource(R.drawable.wizard_death);
+                            final Handler handler2 = new Handler();
+                            handler2.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    img_user.setImageResource(R.drawable.wizard_death_png);
+                                }
+                            }, 700);
+                        }
+                    }
+                    button_pressed = true;
+                    if(button_pressed = true) {
+                        button_pressed = false;
+                        int min = 0;
+                        int max = 1;
+                        random = new Random().nextInt((max - min) + 1) + min;
+
+                        text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
+
+                        int rand = new Random().nextInt((4 - 1) + 1) + 1;
+
+                        if (rand == 1) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 2) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 3) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_benar());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_salah3());
+                        } else if (rand == 4) {
+                            btn_jawaban1.setText(listPertanyaan.get(random).getJawaban_salah1());
+                            btn_jawaban2.setText(listPertanyaan.get(random).getJawaban_salah2());
+                            btn_jawaban3.setText(listPertanyaan.get(random).getJawaban_salah3());
+                            btn_jawaban4.setText(listPertanyaan.get(random).getJawaban_benar());
+                        }
+                    }
+                }
+            });
 
         }
     };
@@ -178,7 +1139,7 @@ public class GameFragment extends Fragment {
     private Observer<Item> showItem = new Observer<Item>(){
         @Override
         public void onChanged(Item item) {
-            text_damage.setText(item.getData().get(0).getItem_name());
+//            text_damage.setText(item.getData().get(0).getItem_name());
         }
     };
 
@@ -186,7 +1147,7 @@ public class GameFragment extends Fragment {
     public Observer<Monster> showMonster = new Observer<Monster>() {
         @Override
         public void onChanged(Monster monster) {
-            text_money.setText(monster.getData().get(0).getMonster_name());
+//            text_money.setText(monster.getData().get(0).getMonster_name());
         }
     };
 
@@ -194,7 +1155,7 @@ public class GameFragment extends Fragment {
     public Observer<MonsterTerbunuh> showTerbunuh = new Observer<MonsterTerbunuh>() {
         @Override
         public void onChanged(MonsterTerbunuh monsterTerbunuh) {
-            text_waktu.setText(String.valueOf(monsterTerbunuh.getData().get(0).getMonster_id_terbunuh()));
+//            text_waktu.setText(String.valueOf(monsterTerbunuh.getData().get(0).getMonster_id_terbunuh()));
         }
     };
 
@@ -202,7 +1163,7 @@ public class GameFragment extends Fragment {
     public Observer<PertanyaanTerjawab> showTerjawab = new Observer<PertanyaanTerjawab>() {
         @Override
         public void onChanged(PertanyaanTerjawab pertanyaanTerjawab) {
-            btn_jawaban1.setText(String.valueOf(pertanyaanTerjawab.getData().get(0).getPertanyaan_id_terjawab()));
+//            btn_jawaban1.setText(String.valueOf(pertanyaanTerjawab.getData().get(0).getPertanyaan_id_terjawab()));
         }
     };
 
@@ -210,8 +1171,13 @@ public class GameFragment extends Fragment {
     public Observer<ItemTerbeli> showTerbeli = new Observer<ItemTerbeli>() {
         @Override
         public void onChanged(ItemTerbeli itemTerbeli) {
-            btn_jawaban2.setText(String.valueOf(itemTerbeli.getData().get(0).getHarga()));
+//            btn_jawaban2.setText(String.valueOf(itemTerbeli.getData().get(0).getHarga()));
         }
     };
+
+    private GameData.Gamedata addGamedata(int student_gamedata_id, int student_id_gamedata, int total_damage, int health_left, int money, int time_left, int current_damage) {
+        GameData.Gamedata gamedata = new GameData.Gamedata(student_gamedata_id, student_id_gamedata, total_damage, health_left, money, time_left, current_damage);
+        return gamedata;
+    }
 
 }

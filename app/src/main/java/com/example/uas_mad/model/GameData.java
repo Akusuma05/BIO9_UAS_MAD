@@ -57,6 +57,16 @@ public class GameData implements Parcelable {
         private int time_left;
         private int current_damage;
 
+        public Gamedata(int student_gamedata_id, int student_id_gamedata, int total_damage, int health_left, int money, int time_left, int current_damage) {
+            this.student_gamedata_id = student_gamedata_id;
+            this.student_id_gamedata = student_id_gamedata;
+            this.total_damage = total_damage;
+            this.health_left = health_left;
+            this.money = money;
+            this.time_left = time_left;
+            this.current_damage = current_damage;
+        }
+
         public static Gamedata objectFromData(String str) {
 
             return new Gson().fromJson(str, Gamedata.class);

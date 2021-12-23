@@ -88,4 +88,9 @@ public class GameViewModel extends AndroidViewModel {
     public MutableLiveData<PertanyaanTerjawab> resultTerjawab = new MutableLiveData<>();
     public void getTerjawab(){resultTerjawab = terjawabRepository.getTerjawab();}
     public LiveData<PertanyaanTerjawab> getResultTerjawab(){return resultTerjawab;}
+
+    //Create Game Data
+    public MutableLiveData<GameData.Gamedata> createGamedata(GameData.Gamedata gamedata){
+        return gameDataRepository.createGameData(gamedata);
+    }
 }

@@ -13,6 +13,7 @@ import com.example.uas_mad.model.TokenResponse;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -64,5 +65,9 @@ public interface ApiEndPoints {
     //Terjawab
     @GET("terjawab")
     Call<PertanyaanTerjawab> getTerjawab();
+
+    //Create Game Data
+    @POST("gamedata")
+    Call<GameData.Gamedata> createGamedata(@Body GameData.Gamedata gamedata);
 
 }
