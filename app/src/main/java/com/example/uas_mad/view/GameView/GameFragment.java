@@ -54,7 +54,7 @@ public class GameFragment extends Fragment {
     private List<Monster.Data> listMonster;
     private List<PertanyaanTerjawab.Data> listTerjawab;
     private List<ItemTerbeli.Data> listTerbeli;
-    public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100, current_health_user;
+    public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100;
     boolean button_pressed = false;
 
 
@@ -204,8 +204,6 @@ public class GameFragment extends Fragment {
             health_user = listGamedata.get(0).getHealth_left();
             current_damage = listGamedata.get(0).getCurrent_damage();
 
-            current_health_user = health_user;
-
             health_bar_monster.setProgress(0);
             health_bar_monster.setProgress(100);
             health_bar_user.setRating(health_user);
@@ -270,7 +268,7 @@ public class GameFragment extends Fragment {
                             }
                         }, 800);
 
-                        if(current_health_monster == 0){
+                        if(current_health_monster <= 0){
                             if(monster == 1) {
                                 img_monster.setImageResource(R.drawable.monster_death);
                                 final Handler handler2 = new Handler();
@@ -388,8 +386,8 @@ public class GameFragment extends Fragment {
 
                             text_upgrade_damage.setText("DAMAGE + 15");
                             text_upgrade_health.setText("HEALTH +1");
-                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
-                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+15));
+                            text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
                             btn_buy2.setText("100");
@@ -411,11 +409,11 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if(current_health_user == 3){
+                                    if(health_user == 3){
                                         Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        current_health_user += 1;
-                                        health_bar_user.setRating(current_health_user);
+                                        health_user += 1;
+                                        health_bar_user.setRating(health_user);
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -440,9 +438,9 @@ public class GameFragment extends Fragment {
 
                         }
                     }else{
-                        health_bar_user.setRating(current_health_user - 1);
-                        current_health_user -= 1;
-                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -491,7 +489,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(current_health_user == 0){
+                        if(health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
@@ -558,7 +556,7 @@ public class GameFragment extends Fragment {
                             }
                         }, 800);
 
-                        if(current_health_monster == 0){
+                        if(current_health_monster <= 0){
                             if(monster == 1) {
                                 img_monster.setImageResource(R.drawable.monster_death);
                                 final Handler handler2 = new Handler();
@@ -676,8 +674,8 @@ public class GameFragment extends Fragment {
 
                             text_upgrade_damage.setText("DAMAGE + 15");
                             text_upgrade_health.setText("HEALTH +1");
-                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
-                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+15));
+                            text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
                             btn_buy2.setText("100");
@@ -699,11 +697,11 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if(current_health_user == 3){
+                                    if(health_user == 3){
                                         Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        current_health_user += 1;
-                                        health_bar_user.setRating(current_health_user);
+                                        health_user += 1;
+                                        health_bar_user.setRating(health_user);
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -727,9 +725,9 @@ public class GameFragment extends Fragment {
                             });
                         }
                     }else{
-                        health_bar_user.setRating(current_health_user - 1);
-                        current_health_user -= 1;
-                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -778,7 +776,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(current_health_user == 0){
+                        if(health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
@@ -845,7 +843,7 @@ public class GameFragment extends Fragment {
                             }
                         }, 800);
 
-                        if(current_health_monster == 0){
+                        if(current_health_monster <= 0){
                             if(monster == 1) {
                                 img_monster.setImageResource(R.drawable.monster_death);
                                 final Handler handler2 = new Handler();
@@ -963,8 +961,8 @@ public class GameFragment extends Fragment {
 
                             text_upgrade_damage.setText("DAMAGE + 15");
                             text_upgrade_health.setText("HEALTH +1");
-                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
-                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+15));
+                            text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
                             btn_buy2.setText("100");
@@ -986,11 +984,11 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if(current_health_user == 3){
+                                    if(health_user == 3){
                                         Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        current_health_user += 1;
-                                        health_bar_user.setRating(current_health_user);
+                                        health_user += 1;
+                                        health_bar_user.setRating(health_user);
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -1014,9 +1012,9 @@ public class GameFragment extends Fragment {
                             });
                         }
                     }else{
-                        health_bar_user.setRating(current_health_user - 1);
-                        current_health_user -= 1;
-                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -1065,7 +1063,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(current_health_user == 0){
+                        if(health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
@@ -1132,7 +1130,7 @@ public class GameFragment extends Fragment {
                             }
                         }, 800);
 
-                        if(current_health_monster == 0){
+                        if(current_health_monster <= 0){
                             if(monster == 1) {
                                 img_monster.setImageResource(R.drawable.monster_death);
                                 final Handler handler2 = new Handler();
@@ -1251,7 +1249,7 @@ public class GameFragment extends Fragment {
                             text_upgrade_damage.setText("DAMAGE + 15");
                             text_upgrade_health.setText("HEALTH +1");
                             text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
-                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                            text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
                             btn_buy2.setText("100");
@@ -1272,11 +1270,11 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if(current_health_user == 3){
+                                    if(health_user == 3){
                                         Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        current_health_user += 1;
-                                        health_bar_user.setRating(current_health_user);
+                                        health_user += 1;
+                                        health_bar_user.setRating(health_user);
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -1300,9 +1298,9 @@ public class GameFragment extends Fragment {
                             });
                         }
                     }else{
-                        health_bar_user.setRating(current_health_user - 1);
-                        current_health_user -= 1;
-                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+                        health_bar_user.setRating(health_user - 1);
+                        health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -1351,7 +1349,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(current_health_user == 0){
+                        if(health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
