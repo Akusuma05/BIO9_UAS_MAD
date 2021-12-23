@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +39,12 @@ import java.util.Random;
  * create an instance of this fragment.
  */
 public class GameFragment extends Fragment {
-    public TextView text_waktu, text_money, text_damage, text_pertanyaan;
-    public Button btn_jawaban1, btn_jawaban2, btn_jawaban3, btn_jawaban4;
+    public TextView text_waktu, text_money, text_damage, text_pertanyaan, text_upgrade_damage, text_upgrade_health, text_upgrade_info1,  text_upgrade_info2;
+    public Button btn_jawaban1, btn_jawaban2, btn_jawaban3, btn_jawaban4, btn_skip, btn_buy1, btn_buy2;
     private ProgressBar health_bar_monster;
     private RatingBar health_bar_user;
     private ImageView img_user, img_monster;
+    private ScrollView shop;
 
     private GameViewModel gameViewModel;
     private SharedPreferenceHelper helper;
@@ -52,7 +54,7 @@ public class GameFragment extends Fragment {
     private List<Monster.Data> listMonster;
     private List<PertanyaanTerjawab.Data> listTerjawab;
     private List<ItemTerbeli.Data> listTerbeli;
-    public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100;
+    public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100, current_health_user;
     boolean button_pressed = false;
 
 
@@ -113,6 +115,13 @@ public class GameFragment extends Fragment {
         gameViewModel = new ViewModelProvider(getActivity()).get(GameViewModel.class);
         gameViewModel.init(helper.getAccessToken());
 
+        btn_jawaban1.setVisibility(View.VISIBLE);
+        btn_jawaban2.setVisibility(View.VISIBLE);
+        btn_jawaban3.setVisibility(View.VISIBLE);
+        btn_jawaban4.setVisibility(View.VISIBLE);
+        shop.setVisibility(View.INVISIBLE);
+
+
 //        GameData.Gamedata gamedata = addGamedata(3, 1, 1 , 1, 1, 1, 1);
 //        gameViewModel.createGamedata(gamedata).observe(requireActivity(), gamedata1 -> {
 //            if (gamedata1 != null){
@@ -159,6 +168,10 @@ public class GameFragment extends Fragment {
         text_money = getActivity().findViewById(R.id.text_money);
         text_waktu = getActivity().findViewById(R.id.text_waktu);
         text_pertanyaan = getActivity().findViewById(R.id.text_pertanyaan);
+        text_upgrade_damage = getActivity().findViewById(R.id.text_upgrade_damage);
+        text_upgrade_health = getActivity().findViewById(R.id.text_upgrade_health);
+        text_upgrade_info1 = getActivity().findViewById(R.id.text_upgrade_info1);
+        text_upgrade_info2 = getActivity().findViewById(R.id.text_upgrade_info2);
 
         health_bar_monster = getActivity().findViewById(R.id.health_bar_monster);
         health_bar_user = getActivity().findViewById(R.id.health_bar_user);
@@ -167,9 +180,14 @@ public class GameFragment extends Fragment {
         btn_jawaban2 = getActivity().findViewById(R.id.btn_jawaban2);
         btn_jawaban3 = getActivity().findViewById(R.id.btn_jawaban3);
         btn_jawaban4 = getActivity().findViewById(R.id.btn_jawaban4);
+        btn_buy1 = getActivity().findViewById(R.id.btn_buy1);
+        btn_buy2 = getActivity().findViewById(R.id.btn_buy2);
+        btn_skip = getActivity().findViewById(R.id.btn_skip);
 
         img_monster = getActivity().findViewById(R.id.img_monster);
         img_user = getActivity().findViewById(R.id.img_user);
+
+        shop = getActivity().findViewById(R.id.shop);
     }
 
     //Observer GameData
@@ -180,11 +198,13 @@ public class GameFragment extends Fragment {
             listGamedata = gameData.getGamedata();
 
             text_damage.setText(String.valueOf(listGamedata.get(0).getTotal_damage()));
-            text_waktu.setText(String.valueOf(listGamedata.get(0).getTime_left()));
+            text_waktu.setText("10 : 00");
             text_money.setText(String.valueOf(listGamedata.get(0).getMoney()));
 
             health_user = listGamedata.get(0).getHealth_left();
             current_damage = listGamedata.get(0).getCurrent_damage();
+
+            current_health_user = health_user;
 
             health_bar_monster.setProgress(0);
             health_bar_monster.setProgress(100);
@@ -234,16 +254,9 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     if(btn_jawaban1.getText() == listPertanyaan.get(random).getJawaban_benar()) {
-                        Toast.makeText(getContext(), "jawaban 1 benar", Toast.LENGTH_SHORT).show();
                         float temphealth = (float)(((current_health_monster - current_damage)*100)/health_monster);
                         health_bar_monster.setProgress((int)temphealth);
                         current_health_monster = current_health_monster - current_damage;
-                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(getContext(), String.valueOf(current_damage), Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
-
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -360,15 +373,76 @@ public class GameFragment extends Fragment {
                                 }, 900);
                             }
                             health_monster = health_monster * 2;
-
                             current_health_monster = health_monster;
-                            health_bar_monster.setProgress(0);
+
                             health_bar_monster.setProgress(100);
+
+                            money += 100;
+                            text_money.setText(String.valueOf(money));
+
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            shop.setVisibility(View.VISIBLE);
+
+                            text_upgrade_damage.setText("DAMAGE + 15");
+                            text_upgrade_health.setText("HEALTH +1");
+                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
+                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+
+                            btn_buy1.setText("100");
+                            btn_buy2.setText("100");
+
+                            btn_buy1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    current_damage += 15;
+                                    money -= 100;
+                                    text_money.setText(String.valueOf(money));
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
+
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if(current_health_user == 3){
+                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        current_health_user += 1;
+                                        health_bar_user.setRating(current_health_user);
+                                        money -= 100;
+                                        text_money.setText(String.valueOf(money));
+                                        btn_jawaban1.setVisibility(View.VISIBLE);
+                                        btn_jawaban2.setVisibility(View.VISIBLE);
+                                        btn_jawaban3.setVisibility(View.VISIBLE);
+                                        btn_jawaban4.setVisibility(View.VISIBLE);
+                                        shop.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                            });
+
+                            btn_skip.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
+
                         }
                     }else{
-                        Toast.makeText(getContext(), "jawaban 1 salah", Toast.LENGTH_SHORT).show();
-                        health_bar_user.setRating(health_user - 1);
-                        health_user -= 1;
+                        health_bar_user.setRating(current_health_user - 1);
+                        current_health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -417,7 +491,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(health_user == 0){
+                        if(current_health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
@@ -468,13 +542,9 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     if(btn_jawaban2.getText() == listPertanyaan.get(random).getJawaban_benar()) {
-                        Toast.makeText(getContext(), "jawaban 2 benar", Toast.LENGTH_SHORT).show();
                         float temphealth = (float) (((current_health_monster - current_damage)*100)/health_monster);
                         health_bar_monster.setProgress((int)temphealth);
                         current_health_monster = current_health_monster - current_damage;
-                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -592,13 +662,74 @@ public class GameFragment extends Fragment {
                             }
                             health_monster = health_monster * 2;
                             current_health_monster = health_monster;
-                            health_bar_monster.setProgress(0);
+
                             health_bar_monster.setProgress(100);
+
+                            money += 100;
+                            text_money.setText(String.valueOf(money));
+
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            shop.setVisibility(View.VISIBLE);
+
+                            text_upgrade_damage.setText("DAMAGE + 15");
+                            text_upgrade_health.setText("HEALTH +1");
+                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
+                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+
+                            btn_buy1.setText("100");
+                            btn_buy2.setText("100");
+
+                            btn_buy1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    current_damage += 15;
+                                    money -= 100;
+                                    text_money.setText(String.valueOf(money));
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
+
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if(current_health_user == 3){
+                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        current_health_user += 1;
+                                        health_bar_user.setRating(current_health_user);
+                                        money -= 100;
+                                        text_money.setText(String.valueOf(money));
+                                        btn_jawaban1.setVisibility(View.VISIBLE);
+                                        btn_jawaban2.setVisibility(View.VISIBLE);
+                                        btn_jawaban3.setVisibility(View.VISIBLE);
+                                        btn_jawaban4.setVisibility(View.VISIBLE);
+                                        shop.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                            });
+
+                            btn_skip.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
                         }
                     }else{
-                        Toast.makeText(getContext(), "jawaban 2 salah", Toast.LENGTH_SHORT).show();
-                        health_bar_user.setRating(health_user - 1);
-                        health_user -= 1;
+                        health_bar_user.setRating(current_health_user - 1);
+                        current_health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -647,7 +778,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(health_user == 0){
+                        if(current_health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
@@ -698,14 +829,9 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     if(btn_jawaban3.getText() == listPertanyaan.get(random).getJawaban_benar()) {
-                        Toast.makeText(getContext(), "jawaban 3 benar", Toast.LENGTH_SHORT).show();
                         float temphealth = (float) (((current_health_monster - current_damage)*100)/health_monster);
                         health_bar_monster.setProgress((int) temphealth);
                         current_health_monster = current_health_monster - current_damage;
-                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
-
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -823,13 +949,74 @@ public class GameFragment extends Fragment {
                             }
                             health_monster = health_monster * 2;
                             current_health_monster = health_monster;
-                            health_bar_monster.setProgress(0);
+
                             health_bar_monster.setProgress(100);
+
+                            money += 100;
+                            text_money.setText(String.valueOf(money));
+
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            shop.setVisibility(View.VISIBLE);
+
+                            text_upgrade_damage.setText("DAMAGE + 15");
+                            text_upgrade_health.setText("HEALTH +1");
+                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
+                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+
+                            btn_buy1.setText("100");
+                            btn_buy2.setText("100");
+
+                            btn_buy1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    current_damage += 15;
+                                    money -= 100;
+                                    text_money.setText(String.valueOf(money));
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
+
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if(current_health_user == 3){
+                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        current_health_user += 1;
+                                        health_bar_user.setRating(current_health_user);
+                                        money -= 100;
+                                        text_money.setText(String.valueOf(money));
+                                        btn_jawaban1.setVisibility(View.VISIBLE);
+                                        btn_jawaban2.setVisibility(View.VISIBLE);
+                                        btn_jawaban3.setVisibility(View.VISIBLE);
+                                        btn_jawaban4.setVisibility(View.VISIBLE);
+                                        shop.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                            });
+
+                            btn_skip.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
                         }
                     }else{
-                        Toast.makeText(getContext(), "jawaban 3 salah", Toast.LENGTH_SHORT).show();
-                        health_bar_user.setRating(health_user - 1);
-                        health_user -= 1;
+                        health_bar_user.setRating(current_health_user - 1);
+                        current_health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -878,7 +1065,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(health_user == 0){
+                        if(current_health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
@@ -929,14 +1116,9 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     if(btn_jawaban4.getText() == listPertanyaan.get(random).getJawaban_benar()) {
-                        Toast.makeText(getContext(), "jawaban 4 benar", Toast.LENGTH_SHORT).show();
                         float temphealth = (float) (((current_health_monster - current_damage)*100)/health_monster);
                         health_bar_monster.setProgress((int) temphealth);
                         current_health_monster = current_health_monster - current_damage;
-                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
-
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -1054,13 +1236,73 @@ public class GameFragment extends Fragment {
                             }
                             health_monster = health_monster * 2;
                             current_health_monster = health_monster;
-                            health_bar_monster.setProgress(0);
+
                             health_bar_monster.setProgress(100);
+
+                            money += 100;
+                            text_money.setText(String.valueOf(money));
+
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            shop.setVisibility(View.VISIBLE);
+
+                            text_upgrade_damage.setText("DAMAGE + 15");
+                            text_upgrade_health.setText("HEALTH +1");
+                            text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+=15));
+                            text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
+
+                            btn_buy1.setText("100");
+                            btn_buy2.setText("100");
+
+                            btn_buy1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    current_damage += 15;
+                                    money -= 100;
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
+
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if(current_health_user == 3){
+                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        current_health_user += 1;
+                                        health_bar_user.setRating(current_health_user);
+                                        money -= 100;
+                                        text_money.setText(String.valueOf(money));
+                                        btn_jawaban1.setVisibility(View.VISIBLE);
+                                        btn_jawaban2.setVisibility(View.VISIBLE);
+                                        btn_jawaban3.setVisibility(View.VISIBLE);
+                                        btn_jawaban4.setVisibility(View.VISIBLE);
+                                        shop.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+                            });
+
+                            btn_skip.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    btn_jawaban1.setVisibility(View.VISIBLE);
+                                    btn_jawaban2.setVisibility(View.VISIBLE);
+                                    btn_jawaban3.setVisibility(View.VISIBLE);
+                                    btn_jawaban4.setVisibility(View.VISIBLE);
+                                    shop.setVisibility(View.INVISIBLE);
+                                }
+                            });
                         }
                     }else{
-                        Toast.makeText(getContext(), "jawaban 4 salah", Toast.LENGTH_SHORT).show();
-                        health_bar_user.setRating(health_user - 1);
-                        health_user -= 1;
+                        health_bar_user.setRating(current_health_user - 1);
+                        current_health_user -= 1;
+                        text_upgrade_info2.setText(String.valueOf(current_health_user) + " -> " + String.valueOf(current_health_user++));
 
                         if(monster == 1) {
                             img_monster.setImageResource(R.drawable.monster_attack);
@@ -1109,7 +1351,7 @@ public class GameFragment extends Fragment {
                             }, 1700);
                         }
 
-                        if(health_user == 0){
+                        if(current_health_user == 0){
                             img_user.setImageResource(R.drawable.wizard_death);
                             final Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
