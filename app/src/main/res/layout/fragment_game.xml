@@ -239,6 +239,7 @@
     <ProgressBar
         android:id="@+id/health_bar_monster"
         style="?android:attr/progressBarStyleHorizontal"
+        android:progress="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -267,13 +268,14 @@
     <RatingBar
         android:id="@+id/health_bar_user"
         style="@style/CustomRatingBarStyle"
-        android:progressDrawable="@drawable/custom_rating_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="30dp"
         android:numStars="3"
+        android:progressDrawable="@drawable/custom_rating_bar"
+        android:rating="2"
         app:layout_constraintEnd_toEndOf="@+id/img_user"
         app:layout_constraintStart_toStartOf="@+id/img_user"
         app:layout_constraintTop_toTopOf="@+id/img_user"

@@ -186,6 +186,7 @@ public class GameFragment extends Fragment {
             health_user = listGamedata.get(0).getHealth_left();
             current_damage = listGamedata.get(0).getCurrent_damage();
 
+            health_bar_monster.setProgress(0);
             health_bar_monster.setProgress(100);
             health_bar_user.setRating(health_user);
 
@@ -234,11 +235,15 @@ public class GameFragment extends Fragment {
                 public void onClick(View view) {
                     if(btn_jawaban1.getText() == listPertanyaan.get(random).getJawaban_benar()) {
                         Toast.makeText(getContext(), "jawaban 1 benar", Toast.LENGTH_SHORT).show();
-                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
-                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(current_damage), Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
+                        float temphealth = (float)(((current_health_monster - current_damage)*100)/health_monster);
+                        health_bar_monster.setProgress((int)temphealth);
                         current_health_monster = current_health_monster - current_damage;
+                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), String.valueOf(current_damage), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
+
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -355,7 +360,9 @@ public class GameFragment extends Fragment {
                                 }, 900);
                             }
                             health_monster = health_monster * 2;
+
                             current_health_monster = health_monster;
+                            health_bar_monster.setProgress(0);
                             health_bar_monster.setProgress(100);
                         }
                     }else{
@@ -462,8 +469,12 @@ public class GameFragment extends Fragment {
                 public void onClick(View view) {
                     if(btn_jawaban2.getText() == listPertanyaan.get(random).getJawaban_benar()) {
                         Toast.makeText(getContext(), "jawaban 2 benar", Toast.LENGTH_SHORT).show();
-                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
+                        float temphealth = (float) (((current_health_monster - current_damage)*100)/health_monster);
+                        health_bar_monster.setProgress((int)temphealth);
                         current_health_monster = current_health_monster - current_damage;
+                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -581,6 +592,7 @@ public class GameFragment extends Fragment {
                             }
                             health_monster = health_monster * 2;
                             current_health_monster = health_monster;
+                            health_bar_monster.setProgress(0);
                             health_bar_monster.setProgress(100);
                         }
                     }else{
@@ -687,8 +699,13 @@ public class GameFragment extends Fragment {
                 public void onClick(View view) {
                     if(btn_jawaban3.getText() == listPertanyaan.get(random).getJawaban_benar()) {
                         Toast.makeText(getContext(), "jawaban 3 benar", Toast.LENGTH_SHORT).show();
-                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
+                        float temphealth = (float) (((current_health_monster - current_damage)*100)/health_monster);
+                        health_bar_monster.setProgress((int) temphealth);
                         current_health_monster = current_health_monster - current_damage;
+                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
+
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -806,6 +823,7 @@ public class GameFragment extends Fragment {
                             }
                             health_monster = health_monster * 2;
                             current_health_monster = health_monster;
+                            health_bar_monster.setProgress(0);
                             health_bar_monster.setProgress(100);
                         }
                     }else{
@@ -912,8 +930,13 @@ public class GameFragment extends Fragment {
                 public void onClick(View view) {
                     if(btn_jawaban4.getText() == listPertanyaan.get(random).getJawaban_benar()) {
                         Toast.makeText(getContext(), "jawaban 4 benar", Toast.LENGTH_SHORT).show();
-                        health_bar_monster.setProgress((current_health_monster - current_damage)*(100/health_monster));
+                        float temphealth = (float) (((current_health_monster - current_damage)*100)/health_monster);
+                        health_bar_monster.setProgress((int) temphealth);
                         current_health_monster = current_health_monster - current_damage;
+                        Toast.makeText(getContext(), String.valueOf(temphealth), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(health_monster), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), String.valueOf(current_health_monster), Toast.LENGTH_SHORT).show();
+
 
                         total_damage += current_damage;
                         text_damage.setText(String.valueOf(total_damage));
@@ -1031,6 +1054,7 @@ public class GameFragment extends Fragment {
                             }
                             health_monster = health_monster * 2;
                             current_health_monster = health_monster;
+                            health_bar_monster.setProgress(0);
                             health_bar_monster.setProgress(100);
                         }
                     }else{
