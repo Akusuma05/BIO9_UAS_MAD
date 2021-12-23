@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -27,7 +26,7 @@ import com.google.android.material.textfield.TextInputLayout;
 public class RegisterFragment extends Fragment {
 
     private TextView btn_login_register;
-    private TextInputLayout input_confirm_password, input_password_register, input_username_register, input_email_register;
+    private TextInputLayout input_confirm_password, input_password_register, input_name_register, input_email_register, input_city_register, input_school_register, input_birthyear_register, input_username_register;
     private Button btn_register;
     private RegisterViewModel registerViewModel;
 
@@ -97,16 +96,25 @@ public class RegisterFragment extends Fragment {
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!input_username_register.getEditText().getText().toString().isEmpty()
+                if (!input_name_register.getEditText().getText().toString().isEmpty()
                         && !input_email_register.getEditText().getText().toString().isEmpty()
                         && !input_password_register.getEditText().getText().toString().isEmpty()
-                        && !input_confirm_password.getEditText().getText().toString().isEmpty()){
-                    String name = input_username_register.getEditText().getText().toString().trim();
+                        && !input_confirm_password.getEditText().getText().toString().isEmpty()
+                        && !input_city_register.getEditText().getText().toString().isEmpty()
+                        && !input_birthyear_register.getEditText().getText().toString().isEmpty()
+                        && !input_school_register.getEditText().getText().toString().isEmpty()
+                        && !input_username_register.getEditText().getText().toString().isEmpty()){
+
+                    String name = input_name_register.getEditText().getText().toString().trim();
                     String email = input_email_register.getEditText().getText().toString().trim();
                     String pass = input_password_register.getEditText().getText().toString().trim();
                     String cpass = input_confirm_password.getEditText().getText().toString().trim();
+                    String username = input_username_register.getEditText().getText().toString().trim();
+                    String city = input_city_register.getEditText().getText().toString().trim();
+                    String school = input_school_register.getEditText().getText().toString().trim();
+                    int birthyear = Integer.parseInt(input_birthyear_register.getEditText().getText().toString().trim());
 
-                    registerViewModel.register(name, email, pass, cpass).observe(requireActivity(), registerResponse -> {
+                    registerViewModel.register(name, email, pass, cpass, school, city, birthyear, username).observe(requireActivity(), registerResponse -> {
                         if (registerResponse != null){
                             Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
                             Toast.makeText(requireActivity(), "Register Success", Toast.LENGTH_SHORT).show();
@@ -123,11 +131,16 @@ public class RegisterFragment extends Fragment {
 
     //Fungsi Deklarasi
     private void initview() {
-        btn_login_register = getActivity().findViewById(R.id.btn_login_register);
         input_confirm_password = getActivity().findViewById(R.id.input_confirm_password);
         input_password_register = getActivity().findViewById(R.id.input_password_register);
-        input_username_register = getActivity().findViewById(R.id.input_username_register);
+        input_name_register = getActivity().findViewById(R.id.input_name_register);
         input_email_register = getActivity().findViewById(R.id.input_email_register);
+        input_birthyear_register = getActivity().findViewById(R.id.input_birthyear_register);
+        input_city_register = getActivity().findViewById(R.id.input_city_register);
+        input_school_register = getActivity().findViewById(R.id.input_school_register);
+        input_username_register = getActivity().findViewById(R.id.input_username_register);
+
         btn_register = getActivity().findViewById(R.id.btn_register);
+        btn_login_register = getActivity().findViewById(R.id.btn_login_register);
     }
 }

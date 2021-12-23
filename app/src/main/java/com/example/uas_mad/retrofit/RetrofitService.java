@@ -69,8 +69,8 @@ public class RetrofitService {
     }
 
     //Register
-    public Call<RegisterResponse> register(String name, String email, String password, String password_confirmation){
-        return api.register(name, email, password, password_confirmation);
+    public Call<RegisterResponse> register(String name, String email, String password, String password_confirmation, String school, String city, int birthyear, String username){
+        return api.register(name, email, password, password_confirmation, school, city, birthyear, username);
     }
 
     //Logout
