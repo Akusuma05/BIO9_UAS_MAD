@@ -133,6 +133,7 @@ public class MenuFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putInt("Student_id", profile.getId());
                     Navigation.findNavController(view).navigate(R.id.action_menuFragment_to_gameFragment, bundle);
+
                 }
             });
         }

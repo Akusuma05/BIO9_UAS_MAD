@@ -35,10 +35,11 @@ public interface ApiEndPoints {
                                     @Field("birthyear") int birthyear,
                                     @Field("username")String username);
 
+    //Logout
     @POST("logout")
     Call<JsonObject> logout();
 
-    //Gamedata
+    //Gamedata{Studentid}
     @GET("gamedata/{student_id}")
     Call<GameData> getGameData(@Path("student_id") int student_id);
 
@@ -73,5 +74,4 @@ public interface ApiEndPoints {
     //Create Game Data
     @POST("gamedata")
     Call<GameData.Gamedata> createGamedata(@Body GameData.Gamedata gamedata);
-
 }

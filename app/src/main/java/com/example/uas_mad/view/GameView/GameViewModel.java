@@ -41,13 +41,13 @@ public class GameViewModel extends AndroidViewModel {
 
     public void init(String token){
         Log.d(TAG, "init: "+token);
-        gameDataRepository = gameDataRepository.getInstance(token);
-        pertanyaanRepository = pertanyaanRepository.getInstance(token);
-        itemRepository = itemRepository.getInstance(token);
-        monsterRepository = monsterRepository.getInstance(token);
-        terbeliRepository = terbeliRepository.getInstance(token);
-        terbunuhRepository = terbunuhRepository.getInstance(token);
-        terjawabRepository = terjawabRepository.getInstance(token);
+        gameDataRepository = GameDataRepository.getInstance(token);
+        pertanyaanRepository = PertanyaanRepository.getInstance(token);
+        itemRepository = ItemRepository.getInstance(token);
+        monsterRepository = MonsterRepository.getInstance(token);
+        terbeliRepository = TerbeliRepository.getInstance(token);
+        terbunuhRepository = TerbunuhRepository.getInstance(token);
+        terjawabRepository = TerjawabRepository.getInstance(token);
     }
 
     //View Model Get Game Data {Student ID}
@@ -89,8 +89,9 @@ public class GameViewModel extends AndroidViewModel {
     public void getTerjawab(){resultTerjawab = terjawabRepository.getTerjawab();}
     public LiveData<PertanyaanTerjawab> getResultTerjawab(){return resultTerjawab;}
 
-    //Create Game Data
-    public MutableLiveData<GameData.Gamedata> createGamedata(GameData.Gamedata gamedata){
-        return gameDataRepository.createGameData(gamedata);
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        gameDataRepository.resetInstance();
     }
 }

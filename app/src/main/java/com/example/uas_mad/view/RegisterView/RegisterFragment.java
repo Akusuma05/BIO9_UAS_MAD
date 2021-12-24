@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
@@ -16,6 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uas_mad.R;
+import com.example.uas_mad.helper.SharedPreferenceHelper;
+import com.example.uas_mad.model.GameData;
+import com.example.uas_mad.model.Profile;
+import com.example.uas_mad.view.GameView.GameViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 
 /**
@@ -28,7 +33,9 @@ public class RegisterFragment extends Fragment {
     private TextView btn_login_register;
     private TextInputLayout input_confirm_password, input_password_register, input_name_register, input_email_register, input_city_register, input_school_register, input_birthyear_register, input_username_register;
     private Button btn_register;
+
     private RegisterViewModel registerViewModel;
+    private SharedPreferenceHelper helper;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -116,6 +123,22 @@ public class RegisterFragment extends Fragment {
 
                     registerViewModel.register(name, email, pass, cpass, school, city, birthyear, username).observe(requireActivity(), registerResponse -> {
                         if (registerResponse != null){
+
+                            //Login
+                            helper = SharedPreferenceHelper.getInstance(requireActivity());
+                            registerViewModel.login(email, pass).observe(requireActivity(), tokenResponse -> {
+                                if (tokenResponse != null){
+
+                                    //Get Student ID
+                                    helper.saveAccessToken(tokenResponse.getAuthorization());
+                                    helper = SharedPreferenceHelper.getInstance(requireActivity());
+                                    registerViewModel = new ViewModelProvider(getActivity()).get(RegisterViewModel.class);
+                                    registerViewModel.init(helper.getAccessToken());
+                                    registerViewModel.getStudentData();
+                                    registerViewModel.getResultStudentData().observe(getActivity(), showprofile);
+                                }
+                            });
+
                             Navigation.findNavController(view).navigate(R.id.action_registerFragment_to_loginFragment);
                             Toast.makeText(requireActivity(), "Register Success", Toast.LENGTH_SHORT).show();
                         }else{
@@ -142,5 +165,32 @@ public class RegisterFragment extends Fragment {
 
         btn_register = getActivity().findViewById(R.id.btn_register);
         btn_login_register = getActivity().findViewById(R.id.btn_login_register);
+    }
+
+    private Observer<Profile> showprofile = new Observer<Profile>() {
+        @Override
+        public void onChanged(Profile profile) {
+                //Add New Game data
+                GameData.Gamedata gamedata = addGamedata(profile.getId(), profile.getId(), 0 , 3, 0, 600, 20);
+                registerViewModel.createGamedata(gamedata).observe(requireActivity(), gamedata1 -> {
+
+                //Logout
+                if (gamedata1 != null){
+                    registerViewModel.logout().observe(requireActivity(), s ->{
+                        if (!s.isEmpty()){
+                            helper.clearPref();
+                            Toast.makeText(requireActivity(), "Add Gamedata Success", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(requireActivity(), "Add Gamedata Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
+
+    private GameData.Gamedata addGamedata(int student_gamedata_id, int student_id_gamedata, int total_damage, int health_left, int money, int time_left, int current_damage) {
+        GameData.Gamedata gamedata = new GameData.Gamedata(student_gamedata_id, student_id_gamedata, total_damage, health_left, money, time_left, current_damage);
+        return gamedata;
     }
 }

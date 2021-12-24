@@ -40,7 +40,7 @@ public class GameDataRepository {
 
     //Get Game Data {Student Id}
     public MutableLiveData<GameData> getGameData(int student_id){
-        final MutableLiveData<GameData> usergamedata = new MutableLiveData<>();
+         MutableLiveData<GameData> usergamedata = new MutableLiveData<>();
 
         apiService.getGameData(student_id).enqueue(new Callback<GameData>() {
             @Override

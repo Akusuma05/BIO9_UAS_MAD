@@ -111,8 +111,8 @@ public class GameFragment extends Fragment {
         //Deklarasi
         initView();
 
-        helper = SharedPreferenceHelper.getInstance(requireActivity());
         gameViewModel = new ViewModelProvider(getActivity()).get(GameViewModel.class);
+        helper = SharedPreferenceHelper.getInstance(requireActivity());
         gameViewModel.init(helper.getAccessToken());
 
         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -122,17 +122,9 @@ public class GameFragment extends Fragment {
         shop.setVisibility(View.INVISIBLE);
 
 
-//        GameData.Gamedata gamedata = addGamedata(3, 1, 1 , 1, 1, 1, 1);
-//        gameViewModel.createGamedata(gamedata).observe(requireActivity(), gamedata1 -> {
-//            if (gamedata1 != null){
-//                Toast.makeText(requireActivity(), "Add Gamedata Success", Toast.LENGTH_SHORT).show();
-//            }else{
-//                Toast.makeText(requireActivity(), "Add Gamedata Failed", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         //Game Data
         int studentid = getArguments().getInt("Student_id");
+        Toast.makeText(getContext(), String.valueOf(studentid), Toast.LENGTH_SHORT).show();
         gameViewModel.getGamedata(studentid);
         gameViewModel.getResultGameData().observe(getActivity(), showGameData);
 
@@ -1439,9 +1431,6 @@ public class GameFragment extends Fragment {
         }
     };
 
-    private GameData.Gamedata addGamedata(int student_gamedata_id, int student_id_gamedata, int total_damage, int health_left, int money, int time_left, int current_damage) {
-        GameData.Gamedata gamedata = new GameData.Gamedata(student_gamedata_id, student_id_gamedata, total_damage, health_left, money, time_left, current_damage);
-        return gamedata;
-    }
+
 
 }
