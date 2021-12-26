@@ -1,5 +1,6 @@
 package com.example.uas_mad.view.GameView;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -26,10 +29,12 @@ import com.example.uas_mad.helper.SharedPreferenceHelper;
 import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Item;
 import com.example.uas_mad.model.ItemTerbeli;
+import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.model.Monster;
 import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
 import com.example.uas_mad.model.PertanyaanTerjawab;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 import java.util.Random;
@@ -41,12 +46,15 @@ import java.util.concurrent.TimeUnit;
  * create an instance of this fragment.
  */
 public class GameFragment extends Fragment {
-    public TextView text_waktu, text_money, text_damage, text_pertanyaan, text_upgrade_damage, text_upgrade_health, text_upgrade_info1,  text_upgrade_info2;
-    public Button btn_jawaban1, btn_jawaban2, btn_jawaban3, btn_jawaban4, btn_skip, btn_buy1, btn_buy2;
+    public TextView text_waktu, text_money, text_damage, text_pertanyaan, text_upgrade_damage, text_upgrade_health, text_upgrade_info1,  text_upgrade_info2, text_warning;
+    public Button btn_jawaban1, btn_jawaban2, btn_jawaban3, btn_jawaban4, btn_skip, btn_buy1, btn_buy2, btn_resume, btn_quit;
     private ProgressBar health_bar_monster;
     private RatingBar health_bar_user;
     private ImageView img_user, img_monster;
     private ScrollView shop;
+    private FloatingActionButton btn_pause;
+    private View view_pause;
+    private String username;
 
     private GameViewModel gameViewModel;
     private SharedPreferenceHelper helper;
@@ -57,8 +65,8 @@ public class GameFragment extends Fragment {
     private List<PertanyaanTerjawab.Data> listTerjawab;
     private List<ItemTerbeli.Data> listTerbeli;
     public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100;
-    boolean button_pressed = false;
-
+    private boolean button_pressed = false;
+    private CountDownTimer Timer;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -125,6 +133,7 @@ public class GameFragment extends Fragment {
 
 
         //Game Data
+        username = getArguments().getString("student_name");
         int studentid = getArguments().getInt("Student_id");
         gameViewModel.getGamedata(studentid);
         gameViewModel.getResultGameData().observe(getActivity(), showGameData);
@@ -153,6 +162,62 @@ public class GameFragment extends Fragment {
         gameViewModel.getTerbeli();
         gameViewModel.getResultTerbeli().observe(getActivity(), showTerbeli);
 
+        //Pause
+        btn_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Timer.cancel();
+
+                view_pause.setVisibility(View.VISIBLE);
+
+                btn_resume.setVisibility(View.VISIBLE);
+                btn_quit.setVisibility(View.VISIBLE);
+                text_pertanyaan.setVisibility(View.INVISIBLE);
+                btn_jawaban1.setVisibility(View.INVISIBLE);
+                btn_jawaban2.setVisibility(View.INVISIBLE);
+                btn_jawaban3.setVisibility(View.INVISIBLE);
+                btn_jawaban4.setVisibility(View.INVISIBLE);
+                text_warning.setVisibility(View.VISIBLE);
+                btn_pause.setEnabled(false);
+            }
+        });
+
+        btn_resume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Timer = new CountDownTimer(waktu, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        text_waktu.setText(""+String.format("%d min, %d sec",
+                                TimeUnit.MILLISECONDS.toMinutes( millisUntilFinished),
+                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                        waktu = (int) millisUntilFinished;
+                    }
+
+                    public void onFinish() {
+                        text_waktu.setText("done!");
+                    }
+                }.start();
+
+                view_pause.setVisibility(View.INVISIBLE);
+                btn_resume.setVisibility(View.INVISIBLE);
+                btn_quit.setVisibility(View.INVISIBLE);
+                text_pertanyaan.setVisibility(View.VISIBLE);
+                btn_jawaban1.setVisibility(View.VISIBLE);
+                btn_jawaban2.setVisibility(View.VISIBLE);
+                btn_jawaban3.setVisibility(View.VISIBLE);
+                btn_jawaban4.setVisibility(View.VISIBLE);
+                text_warning.setVisibility(View.INVISIBLE);
+                btn_pause.setEnabled(true);
+
+            }
+        });
+
+        btn_quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_gameFragment_to_menuFragment);
+            }
+        });
 
 
     }
@@ -167,6 +232,7 @@ public class GameFragment extends Fragment {
         text_upgrade_health = getActivity().findViewById(R.id.text_upgrade_health);
         text_upgrade_info1 = getActivity().findViewById(R.id.text_upgrade_info1);
         text_upgrade_info2 = getActivity().findViewById(R.id.text_upgrade_info2);
+        text_warning = getActivity().findViewById(R.id.text_warning);
 
         health_bar_monster = getActivity().findViewById(R.id.health_bar_monster);
         health_bar_user = getActivity().findViewById(R.id.health_bar_user);
@@ -178,6 +244,11 @@ public class GameFragment extends Fragment {
         btn_buy1 = getActivity().findViewById(R.id.btn_buy1);
         btn_buy2 = getActivity().findViewById(R.id.btn_buy2);
         btn_skip = getActivity().findViewById(R.id.btn_skip);
+        btn_pause = getActivity().findViewById(R.id.btn_pause);
+        btn_resume = getActivity().findViewById(R.id.btn_resume);
+        btn_quit = getActivity().findViewById(R.id.btn_quit);
+
+        view_pause = getActivity().findViewById(R.id.view_pause);
 
         img_monster = getActivity().findViewById(R.id.img_monster);
         img_user = getActivity().findViewById(R.id.img_user);
@@ -204,15 +275,43 @@ public class GameFragment extends Fragment {
             health_bar_user.setRating(health_user);
 
             //CountDownTimer
-            new CountDownTimer(listGamedata.get(0).getTime_left(), 1000) {
+            waktu = listGamedata.get(0).getTime_left();
+            Timer = new CountDownTimer(waktu, 1000) {
                 public void onTick(long millisUntilFinished) {
                     text_waktu.setText(""+String.format("%d min, %d sec",
                             TimeUnit.MILLISECONDS.toMinutes( millisUntilFinished),
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                    waktu = (int) millisUntilFinished;
                 }
 
                 public void onFinish() {
-                    text_waktu.setText("done!");
+                    view_pause.setVisibility(View.VISIBLE);
+                    text_pertanyaan.setVisibility(View.INVISIBLE);
+                    btn_jawaban1.setVisibility(View.INVISIBLE);
+                    btn_jawaban2.setVisibility(View.INVISIBLE);
+                    btn_jawaban3.setVisibility(View.INVISIBLE);
+                    btn_jawaban4.setVisibility(View.INVISIBLE);
+                    btn_pause.setEnabled(false);
+                    text_warning.setVisibility(View.VISIBLE);
+                    text_warning.setText("Game Over Times UPPP!!!");
+
+                    Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
+                    gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
+                        final Handler handler3 = new Handler();
+                        handler3.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Navigation.findNavController(getView()).navigate(R.id.action_gameFragment_to_leaderboardFragment);
+                            }
+                        }, 5000);
+                    });
+                }
+
+                public void onPause () {
+
+                }
+                public void onResume(){
+                    onTick(waktu);
                 }
 
             }.start();
@@ -517,6 +616,27 @@ public class GameFragment extends Fragment {
                                     img_user.setImageResource(R.drawable.wizard_death_png);
                                 }
                             }, 700);
+
+                            view_pause.setVisibility(View.VISIBLE);
+                            text_pertanyaan.setVisibility(View.INVISIBLE);
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            btn_pause.setEnabled(false);
+                            text_warning.setVisibility(View.VISIBLE);
+                            text_warning.setText("Game Over U dead!!!");
+
+                            Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
+                            gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
+                                final Handler handler3 = new Handler();
+                                handler3.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Navigation.findNavController(view).navigate(R.id.action_gameFragment_to_leaderboardFragment);
+                                    }
+                                }, 5000);
+                            });
                         }
                     }
                     button_pressed = true;
@@ -814,6 +934,27 @@ public class GameFragment extends Fragment {
                                     img_user.setImageResource(R.drawable.wizard_death_png);
                                 }
                             }, 700);
+
+                            view_pause.setVisibility(View.VISIBLE);
+                            text_pertanyaan.setVisibility(View.INVISIBLE);
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            btn_pause.setEnabled(false);
+                            text_warning.setVisibility(View.VISIBLE);
+                            text_warning.setText("Game Over U dead!!!");
+
+                            Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
+                            gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
+                                final Handler handler3 = new Handler();
+                                handler3.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Navigation.findNavController(view).navigate(R.id.action_gameFragment_to_leaderboardFragment);
+                                    }
+                                }, 5000);
+                            });
                         }
                     }
                     button_pressed = true;
@@ -1110,6 +1251,27 @@ public class GameFragment extends Fragment {
                                     img_user.setImageResource(R.drawable.wizard_death_png);
                                 }
                             }, 700);
+
+                            view_pause.setVisibility(View.VISIBLE);
+                            text_pertanyaan.setVisibility(View.INVISIBLE);
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            btn_pause.setEnabled(false);
+                            text_warning.setVisibility(View.VISIBLE);
+                            text_warning.setText("Game Over U dead!!!");
+
+                            Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
+                            gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
+                                final Handler handler3 = new Handler();
+                                handler3.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Navigation.findNavController(view).navigate(R.id.action_gameFragment_to_leaderboardFragment);
+                                    }
+                                }, 5000);
+                            });
                         }
                     }
                     button_pressed = true;
@@ -1407,6 +1569,27 @@ public class GameFragment extends Fragment {
                                     img_user.setImageResource(R.drawable.wizard_death_png);
                                 }
                             }, 700);
+
+                            view_pause.setVisibility(View.VISIBLE);
+                            text_pertanyaan.setVisibility(View.INVISIBLE);
+                            btn_jawaban1.setVisibility(View.INVISIBLE);
+                            btn_jawaban2.setVisibility(View.INVISIBLE);
+                            btn_jawaban3.setVisibility(View.INVISIBLE);
+                            btn_jawaban4.setVisibility(View.INVISIBLE);
+                            btn_pause.setEnabled(false);
+                            text_warning.setVisibility(View.VISIBLE);
+                            text_warning.setText("Game Over U dead!!!");
+
+                            Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
+                            gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
+                                final Handler handler3 = new Handler();
+                                handler3.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Navigation.findNavController(view).navigate(R.id.action_gameFragment_to_leaderboardFragment);
+                                    }
+                                }, 5000);
+                            });
                         }
                     }
                     button_pressed = true;
@@ -1444,7 +1627,6 @@ public class GameFragment extends Fragment {
                     }
                 }
             });
-
         }
     };
 
@@ -1488,6 +1670,9 @@ public class GameFragment extends Fragment {
         }
     };
 
-
+    private Leaderboard.Data addLeaderboard(String username, int total_damage){
+        Leaderboard.Data leaderboard = new Leaderboard.Data(username, total_damage);
+        return leaderboard;
+    }
 
 }

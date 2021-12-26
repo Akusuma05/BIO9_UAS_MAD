@@ -38,6 +38,9 @@
             android:name="Student_id"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_gameFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
     </fragment>
     <fragment
         android:id="@+id/leaderboardFragment"
@@ -66,5 +69,9 @@
             android:name="Student_id"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="Student_name"
+            app:argType="string"
+            android:defaultValue="null" />
     </fragment>
 </navigation>

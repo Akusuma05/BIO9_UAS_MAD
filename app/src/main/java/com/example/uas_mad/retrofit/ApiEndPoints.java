@@ -19,6 +19,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiEndPoints {
@@ -79,4 +80,8 @@ public interface ApiEndPoints {
     //Leaderboard
     @GET("leaderboard")
     Call<Leaderboard> getLeaderboard();
+
+    //Create Leaderboard
+    @POST("leaderboard")
+    Call<Leaderboard.Data> createLeaderboard(@Body Leaderboard.Data leaderboard);
 }

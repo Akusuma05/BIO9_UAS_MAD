@@ -11,12 +11,14 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Item;
 import com.example.uas_mad.model.ItemTerbeli;
+import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.model.Monster;
 import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
 import com.example.uas_mad.model.PertanyaanTerjawab;
 import com.example.uas_mad.repositories.GameDataRepository;
 import com.example.uas_mad.repositories.ItemRepository;
+import com.example.uas_mad.repositories.LeaderboardRepository;
 import com.example.uas_mad.repositories.MonsterRepository;
 import com.example.uas_mad.repositories.PertanyaanRepository;
 import com.example.uas_mad.repositories.ProfileRepository;
@@ -32,6 +34,7 @@ public class GameViewModel extends AndroidViewModel {
     private TerbeliRepository terbeliRepository;
     private TerbunuhRepository terbunuhRepository;
     private TerjawabRepository terjawabRepository;
+    private LeaderboardRepository leaderboardRepository;
 
     private static final String TAG = "GameViewModel";
 
@@ -48,6 +51,7 @@ public class GameViewModel extends AndroidViewModel {
         terbeliRepository = TerbeliRepository.getInstance(token);
         terbunuhRepository = TerbunuhRepository.getInstance(token);
         terjawabRepository = TerjawabRepository.getInstance(token);
+        leaderboardRepository = LeaderboardRepository.getInstance(token);
     }
 
     //View Model Get Game Data {Student ID}
@@ -88,6 +92,11 @@ public class GameViewModel extends AndroidViewModel {
     public MutableLiveData<PertanyaanTerjawab> resultTerjawab = new MutableLiveData<>();
     public void getTerjawab(){resultTerjawab = terjawabRepository.getTerjawab();}
     public LiveData<PertanyaanTerjawab> getResultTerjawab(){return resultTerjawab;}
+
+    //Create Leaderboard
+    public MutableLiveData<Leaderboard.Data> createLeaderboard(Leaderboard.Data leaderboard){
+        return leaderboardRepository.createLeaderboard(leaderboard);
+    }
 
     @Override
     protected void onCleared() {

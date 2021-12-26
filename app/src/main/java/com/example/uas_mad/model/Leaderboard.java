@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Leaderboard implements Parcelable {
 
+
     private List<Data> data;
 
     protected Leaderboard(Parcel in) {
@@ -51,7 +52,12 @@ public class Leaderboard implements Parcelable {
     public static class Data {
         private int leaderboard_id;
         private String name;
-        private String total_damage;
+        private int total_damage;
+
+        public Data(String name, int total_damage) {
+            this.name = name;
+            this.total_damage = total_damage;
+        }
 
         public static Data objectFromData(String str) {
 
@@ -74,11 +80,11 @@ public class Leaderboard implements Parcelable {
             this.name = name;
         }
 
-        public String getTotal_damage() {
+        public int getTotal_damage() {
             return total_damage;
         }
 
-        public void setTotal_damage(String total_damage) {
+        public void setTotal_damage(int total_damage) {
             this.total_damage = total_damage;
         }
     }

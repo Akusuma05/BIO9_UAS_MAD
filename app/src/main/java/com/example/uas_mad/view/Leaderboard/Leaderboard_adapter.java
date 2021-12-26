@@ -34,7 +34,7 @@ public class Leaderboard_adapter extends RecyclerView.Adapter<Leaderboard_adapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.text_number_leaderboard.setText(String.valueOf(position+1));
         holder.text_name_leaderboard.setText(listleaderboard.get(position).getName());
-        holder.text_damage_leaderboard.setText(listleaderboard.get(position).getTotal_damage());
+        holder.text_damage_leaderboard.setText(String.valueOf(listleaderboard.get(position).getTotal_damage()));
     }
 
     @Override

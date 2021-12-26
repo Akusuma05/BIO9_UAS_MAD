@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Item;
 import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.retrofit.RetrofitService;
@@ -57,5 +58,24 @@ public class LeaderboardRepository {
             }
         });
         return listLeaderboard;
+    }
+
+    //Create Leaderboard
+    public MutableLiveData<Leaderboard.Data> createLeaderboard(Leaderboard.Data leaderboard){
+        final MutableLiveData<Leaderboard.Data> listAddLeaderboard = new MutableLiveData<>();
+
+        apiService.createLeaderboard(leaderboard).enqueue(new Callback<Leaderboard.Data>() {
+            @Override
+            public void onResponse(Call<Leaderboard.Data> call, Response<Leaderboard.Data> response) {
+                Log.d(TAG, "OnResponse: "+response.body());
+                listAddLeaderboard.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Leaderboard.Data> call, Throwable t) {
+                Log.e(TAG, "OnFailure " + t.getMessage());
+            }
+        });
+        return listAddLeaderboard;
     }
 }

@@ -106,4 +106,9 @@ public class RetrofitService {
 
     //Leaderboard
     public Call<Leaderboard> getLeaderboard(){return api.getLeaderboard();}
+
+    //Create Leaderboard
+    public Call<Leaderboard.Data> createLeaderboard(Leaderboard.Data leaderboard){
+        return api.createLeaderboard(leaderboard);
+    }
 }

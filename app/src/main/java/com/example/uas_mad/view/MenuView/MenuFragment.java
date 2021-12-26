@@ -138,9 +138,9 @@ public class MenuFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Bundle bundle = new Bundle();
+                    bundle.putString("student_name", profile.getUsername());
                     bundle.putInt("Student_id", profile.getId());
                     Navigation.findNavController(view).navigate(R.id.action_menuFragment_to_gameFragment, bundle);
-
                 }
             });
         }
