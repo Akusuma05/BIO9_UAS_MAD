@@ -8,12 +8,17 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Profile;
+import com.example.uas_mad.repositories.GameDataRepository;
+import com.example.uas_mad.repositories.LeaderboardRepository;
 import com.example.uas_mad.repositories.ProfileRepository;
 import com.example.uas_mad.retrofit.RetrofitService;
 
 public class MenuViewModel extends AndroidViewModel {
     private ProfileRepository profileRepository;
+    private LeaderboardRepository leaderboardRepository;
+    private GameDataRepository gameDataRepository;
     private static final String TAG = "MenuViewModel";
 
     public MenuViewModel(@NonNull Application application) {
@@ -23,10 +28,14 @@ public class MenuViewModel extends AndroidViewModel {
     public void init(String token){
         Log.d(TAG, "token: "+token);
         profileRepository = ProfileRepository.getInstance(token);
+        gameDataRepository = GameDataRepository.getInstance(token);
+        leaderboardRepository = LeaderboardRepository.getInstance(token);
     }
 
     public LiveData<String> logout(){
         profileRepository.resetInstance();
+        gameDataRepository.resetInstance();
+        leaderboardRepository.resetInstance();
         return profileRepository.logout();
     }
 
@@ -45,5 +54,7 @@ public class MenuViewModel extends AndroidViewModel {
         super.onCleared();
         Log.d(TAG, "onCleared: ");
         profileRepository.resetInstance();
+        gameDataRepository.resetInstance();
+        leaderboardRepository.resetInstance();
     }
 }

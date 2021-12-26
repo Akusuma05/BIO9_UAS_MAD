@@ -114,6 +114,13 @@ public class MenuFragment extends Fragment {
             }
         });
 
+        btn_leaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_menuFragment_to_leaderboardFragment);
+            }
+        });
+
     }
 
     //Fungsi Deklarasi

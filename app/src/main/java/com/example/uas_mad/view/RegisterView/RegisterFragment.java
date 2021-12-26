@@ -171,7 +171,7 @@ public class RegisterFragment extends Fragment {
         @Override
         public void onChanged(Profile profile) {
                 //Add New Game data
-                GameData.Gamedata gamedata = addGamedata(profile.getId(), profile.getId(), 0 , 3, 0, 600, 20);
+                GameData.Gamedata gamedata = addGamedata(profile.getId(), profile.getId(), 0 , 3, 0, 600000, 20);
                 registerViewModel.createGamedata(gamedata).observe(requireActivity(), gamedata1 -> {
 
                 //Logout
@@ -179,11 +179,9 @@ public class RegisterFragment extends Fragment {
                     registerViewModel.logout().observe(requireActivity(), s ->{
                         if (!s.isEmpty()){
                             helper.clearPref();
-                            Toast.makeText(requireActivity(), "Add Gamedata Success", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }else{
-                    Toast.makeText(requireActivity(), "Add Gamedata Failed", Toast.LENGTH_SHORT).show();
                 }
             });
         }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.example.uas_mad.model.PertanyaanTerjawab;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -124,7 +126,6 @@ public class GameFragment extends Fragment {
 
         //Game Data
         int studentid = getArguments().getInt("Student_id");
-        Toast.makeText(getContext(), String.valueOf(studentid), Toast.LENGTH_SHORT).show();
         gameViewModel.getGamedata(studentid);
         gameViewModel.getResultGameData().observe(getActivity(), showGameData);
 
@@ -151,6 +152,8 @@ public class GameFragment extends Fragment {
         //Terbeli
         gameViewModel.getTerbeli();
         gameViewModel.getResultTerbeli().observe(getActivity(), showTerbeli);
+
+
 
     }
 
@@ -199,6 +202,20 @@ public class GameFragment extends Fragment {
             health_bar_monster.setProgress(0);
             health_bar_monster.setProgress(100);
             health_bar_user.setRating(health_user);
+
+            //CountDownTimer
+            new CountDownTimer(listGamedata.get(0).getTime_left(), 1000) {
+                public void onTick(long millisUntilFinished) {
+                    text_waktu.setText(""+String.format("%d min, %d sec",
+                            TimeUnit.MILLISECONDS.toMinutes( millisUntilFinished),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                }
+
+                public void onFinish() {
+                    text_waktu.setText("done!");
+                }
+
+            }.start();
 
         }
     };
@@ -380,32 +397,16 @@ public class GameFragment extends Fragment {
                             text_upgrade_health.setText("HEALTH +1");
                             text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+15));
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
-
                             btn_buy1.setText("100");
-                            btn_buy2.setText("100");
+                            btn_buy2.setText("1000");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    current_damage += 15;
-                                    money -= 100;
-                                    text_money.setText(String.valueOf(money));
-                                    btn_jawaban1.setVisibility(View.VISIBLE);
-                                    btn_jawaban2.setVisibility(View.VISIBLE);
-                                    btn_jawaban3.setVisibility(View.VISIBLE);
-                                    btn_jawaban4.setVisibility(View.VISIBLE);
-                                    shop.setVisibility(View.INVISIBLE);
-                                }
-                            });
-
-                            btn_buy2.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if(health_user == 3){
-                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    if (money <= 100){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        health_user += 1;
-                                        health_bar_user.setRating(health_user);
+                                        current_damage += 15;
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -414,8 +415,34 @@ public class GameFragment extends Fragment {
                                         btn_jawaban4.setVisibility(View.VISIBLE);
                                         shop.setVisibility(View.INVISIBLE);
                                     }
+
                                 }
                             });
+
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (money <= 1000){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        if(health_user == 3){
+                                            Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            health_user += 1;
+                                            health_bar_user.setRating(health_user);
+                                            money -= 1000;
+                                            text_money.setText(String.valueOf(money));
+                                            btn_jawaban1.setVisibility(View.VISIBLE);
+                                            btn_jawaban2.setVisibility(View.VISIBLE);
+                                            btn_jawaban3.setVisibility(View.VISIBLE);
+                                            btn_jawaban4.setVisibility(View.VISIBLE);
+                                            shop.setVisibility(View.INVISIBLE);
+                                        }
+                                    }
+
+                                }
+                            });
+
 
                             btn_skip.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -670,30 +697,15 @@ public class GameFragment extends Fragment {
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
-                            btn_buy2.setText("100");
+                            btn_buy2.setText("1000");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    current_damage += 15;
-                                    money -= 100;
-                                    text_money.setText(String.valueOf(money));
-                                    btn_jawaban1.setVisibility(View.VISIBLE);
-                                    btn_jawaban2.setVisibility(View.VISIBLE);
-                                    btn_jawaban3.setVisibility(View.VISIBLE);
-                                    btn_jawaban4.setVisibility(View.VISIBLE);
-                                    shop.setVisibility(View.INVISIBLE);
-                                }
-                            });
-
-                            btn_buy2.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if(health_user == 3){
-                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    if (money <= 100){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        health_user += 1;
-                                        health_bar_user.setRating(health_user);
+                                        current_damage += 15;
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -702,6 +714,31 @@ public class GameFragment extends Fragment {
                                         btn_jawaban4.setVisibility(View.VISIBLE);
                                         shop.setVisibility(View.INVISIBLE);
                                     }
+
+                                }
+                            });
+
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (money <= 1000){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        if(health_user == 3){
+                                            Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            health_user += 1;
+                                            health_bar_user.setRating(health_user);
+                                            money -= 1000;
+                                            text_money.setText(String.valueOf(money));
+                                            btn_jawaban1.setVisibility(View.VISIBLE);
+                                            btn_jawaban2.setVisibility(View.VISIBLE);
+                                            btn_jawaban3.setVisibility(View.VISIBLE);
+                                            btn_jawaban4.setVisibility(View.VISIBLE);
+                                            shop.setVisibility(View.INVISIBLE);
+                                        }
+                                    }
+
                                 }
                             });
 
@@ -957,30 +994,15 @@ public class GameFragment extends Fragment {
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
-                            btn_buy2.setText("100");
+                            btn_buy2.setText("1000");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    current_damage += 15;
-                                    money -= 100;
-                                    text_money.setText(String.valueOf(money));
-                                    btn_jawaban1.setVisibility(View.VISIBLE);
-                                    btn_jawaban2.setVisibility(View.VISIBLE);
-                                    btn_jawaban3.setVisibility(View.VISIBLE);
-                                    btn_jawaban4.setVisibility(View.VISIBLE);
-                                    shop.setVisibility(View.INVISIBLE);
-                                }
-                            });
-
-                            btn_buy2.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if(health_user == 3){
-                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    if (money <= 100){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        health_user += 1;
-                                        health_bar_user.setRating(health_user);
+                                        current_damage += 15;
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -989,9 +1011,33 @@ public class GameFragment extends Fragment {
                                         btn_jawaban4.setVisibility(View.VISIBLE);
                                         shop.setVisibility(View.INVISIBLE);
                                     }
+
                                 }
                             });
 
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (money <= 1000){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        if(health_user == 3){
+                                            Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            health_user += 1;
+                                            health_bar_user.setRating(health_user);
+                                            money -= 1000;
+                                            text_money.setText(String.valueOf(money));
+                                            btn_jawaban1.setVisibility(View.VISIBLE);
+                                            btn_jawaban2.setVisibility(View.VISIBLE);
+                                            btn_jawaban3.setVisibility(View.VISIBLE);
+                                            btn_jawaban4.setVisibility(View.VISIBLE);
+                                            shop.setVisibility(View.INVISIBLE);
+                                        }
+                                    }
+
+                                }
+                            });
                             btn_skip.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -1244,29 +1290,15 @@ public class GameFragment extends Fragment {
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
-                            btn_buy2.setText("100");
+                            btn_buy2.setText("1000");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    current_damage += 15;
-                                    money -= 100;
-                                    btn_jawaban1.setVisibility(View.VISIBLE);
-                                    btn_jawaban2.setVisibility(View.VISIBLE);
-                                    btn_jawaban3.setVisibility(View.VISIBLE);
-                                    btn_jawaban4.setVisibility(View.VISIBLE);
-                                    shop.setVisibility(View.INVISIBLE);
-                                }
-                            });
-
-                            btn_buy2.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if(health_user == 3){
-                                        Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                    if (money <= 100){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
-                                        health_user += 1;
-                                        health_bar_user.setRating(health_user);
+                                        current_damage += 15;
                                         money -= 100;
                                         text_money.setText(String.valueOf(money));
                                         btn_jawaban1.setVisibility(View.VISIBLE);
@@ -1275,6 +1307,31 @@ public class GameFragment extends Fragment {
                                         btn_jawaban4.setVisibility(View.VISIBLE);
                                         shop.setVisibility(View.INVISIBLE);
                                     }
+
+                                }
+                            });
+
+                            btn_buy2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (money <= 1000){
+                                        Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        if(health_user == 3){
+                                            Toast.makeText(getContext(), "Your health is full !", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            health_user += 1;
+                                            health_bar_user.setRating(health_user);
+                                            money -= 1000;
+                                            text_money.setText(String.valueOf(money));
+                                            btn_jawaban1.setVisibility(View.VISIBLE);
+                                            btn_jawaban2.setVisibility(View.VISIBLE);
+                                            btn_jawaban3.setVisibility(View.VISIBLE);
+                                            btn_jawaban4.setVisibility(View.VISIBLE);
+                                            shop.setVisibility(View.INVISIBLE);
+                                        }
+                                    }
+
                                 }
                             });
 

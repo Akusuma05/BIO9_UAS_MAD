@@ -49,42 +49,46 @@
 
     <Button
         android:id="@+id/btn_jawaban1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="209dp"
+        android:layout_height="45dp"
         android:layout_marginTop="36dp"
-        android:gravity="center_horizontal|center_vertical"
+        android:gravity="center|center_horizontal"
         android:text="Button"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView6" />
 
     <Button
         android:id="@+id/btn_jawaban2"
-        android:layout_width="wrap_content"
+        android:layout_width="209dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:gravity="clip_horizontal|center"
         android:text="Button"
+        android:textAlignment="center"
         app:layout_constraintStart_toStartOf="@+id/btn_jawaban1"
         app:layout_constraintTop_toBottomOf="@+id/btn_jawaban1" />
 
     <Button
         android:id="@+id/btn_jawaban3"
-        android:layout_width="wrap_content"
+        android:layout_width="209dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="Button"
+        android:textAlignment="center"
         app:layout_constraintStart_toStartOf="@+id/btn_jawaban2"
         app:layout_constraintTop_toBottomOf="@+id/btn_jawaban2" />
 
     <Button
         android:id="@+id/btn_jawaban4"
-        android:layout_width="wrap_content"
+        android:layout_width="209dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="Button"
+        android:textAlignment="center"
         app:layout_constraintStart_toStartOf="@+id/btn_jawaban3"
         app:layout_constraintTop_toBottomOf="@+id/btn_jawaban3" />
 

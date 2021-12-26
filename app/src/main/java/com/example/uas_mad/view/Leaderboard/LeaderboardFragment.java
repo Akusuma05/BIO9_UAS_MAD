@@ -2,13 +2,24 @@ package com.example.uas_mad.view.Leaderboard;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.uas_mad.R;
+import com.example.uas_mad.helper.SharedPreferenceHelper;
+import com.example.uas_mad.model.Leaderboard;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +27,15 @@ import com.example.uas_mad.R;
  * create an instance of this fragment.
  */
 public class LeaderboardFragment extends Fragment {
+
+    private TextView text_leaderboard;
+    private FloatingActionButton btn_back_leaderboard;
+    private RecyclerView rv_leaderboard;
+
+    private Leaderboard_adapter adapter;
+    private LeaderboardViewModel leaderboardViewModel;
+    private SharedPreferenceHelper helper;
+    private static final String TAG = "Leaderboard Fragment";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -63,4 +83,39 @@ public class LeaderboardFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_leaderboard, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //Deklarasi
+        initview();
+
+        helper = SharedPreferenceHelper.getInstance(requireActivity());
+        leaderboardViewModel = new ViewModelProvider(getActivity()).get(LeaderboardViewModel.class);
+        leaderboardViewModel.init(helper.getAccessToken());
+        leaderboardViewModel.getLeaderboard();
+        leaderboardViewModel.getResultLeaderboard().observe(getActivity(), showleaderboard);
+
+        btn_back_leaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_leaderboardFragment_to_menuFragment);
+            }
+        });
+    }
+
+    private void initview() {
+        rv_leaderboard = getActivity().findViewById(R.id.rv_leaderboard);
+        btn_back_leaderboard = getActivity().findViewById(R.id.btn_back_leaderboard);
+    }
+
+    private Observer<Leaderboard> showleaderboard = new Observer<Leaderboard>() {
+        @Override
+        public void onChanged(Leaderboard leaderboard) {
+            adapter = new Leaderboard_adapter(leaderboard.getData());
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext());
+            rv_leaderboard.setLayoutManager(manager);
+            rv_leaderboard.setAdapter(adapter);
+        }
+    };
 }

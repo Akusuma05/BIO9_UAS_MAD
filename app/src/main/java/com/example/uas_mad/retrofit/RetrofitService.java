@@ -4,6 +4,7 @@ import com.example.uas_mad.helper.Const;
 import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Item;
 import com.example.uas_mad.model.ItemTerbeli;
+import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.model.Monster;
 import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
@@ -102,4 +103,7 @@ public class RetrofitService {
 
     //Create Game data
     public Call<GameData.Gamedata> createGamedata(GameData.Gamedata gamedata){return api.createGamedata(gamedata);}
+
+    //Leaderboard
+    public Call<Leaderboard> getLeaderboard(){return api.getLeaderboard();}
 }
