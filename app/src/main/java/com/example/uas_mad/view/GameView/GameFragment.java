@@ -327,7 +327,7 @@ public class GameFragment extends Fragment {
             listPertanyaan = pertanyaan.getData();
 
             int min = 0;
-            int max = 1;
+            int max = 56;
             random = new Random().nextInt((max - min) + 1) + min;
 
             text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
@@ -502,7 +502,7 @@ public class GameFragment extends Fragment {
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 100){
+                                    if (money < 100){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         current_damage += 15;
@@ -521,7 +521,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 1000){
+                                    if (money < 1000){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -643,7 +643,7 @@ public class GameFragment extends Fragment {
                     if(button_pressed = true) {
                         button_pressed = false;
                         int min = 0;
-                        int max = 1;
+                        int max = 56;
                         random = new Random().nextInt((max - min) + 1) + min;
 
                         text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
@@ -822,7 +822,7 @@ public class GameFragment extends Fragment {
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 100){
+                                    if (money < 100){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         current_damage += 15;
@@ -841,7 +841,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 1000){
+                                    if (money < 1000){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -961,7 +961,7 @@ public class GameFragment extends Fragment {
                     if(button_pressed = true) {
                         button_pressed = false;
                         int min = 0;
-                        int max = 1;
+                        int max = 56;
                         random = new Random().nextInt((max - min) + 1) + min;
 
                         text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
@@ -1140,7 +1140,7 @@ public class GameFragment extends Fragment {
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 100){
+                                    if (money < 100){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         current_damage += 15;
@@ -1159,7 +1159,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 1000){
+                                    if (money < 1000){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -1278,7 +1278,7 @@ public class GameFragment extends Fragment {
                     if(button_pressed = true) {
                         button_pressed = false;
                         int min = 0;
-                        int max = 1;
+                        int max = 56;
                         random = new Random().nextInt((max - min) + 1) + min;
 
                         text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
@@ -1457,7 +1457,7 @@ public class GameFragment extends Fragment {
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 100){
+                                    if (money < 100){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         current_damage += 15;
@@ -1476,7 +1476,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money <= 1000){
+                                    if (money < 1000){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -1596,7 +1596,7 @@ public class GameFragment extends Fragment {
                     if(button_pressed = true) {
                         button_pressed = false;
                         int min = 0;
-                        int max = 1;
+                        int max = 56;
                         random = new Random().nextInt((max - min) + 1) + min;
 
                         text_pertanyaan.setText(listPertanyaan.get(random).getPertanyaan());
