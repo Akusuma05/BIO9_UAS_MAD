@@ -1,6 +1,5 @@
 package com.example.uas_mad.view.GameView;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.os.CountDownTimer;
@@ -27,13 +25,9 @@ import android.widget.Toast;
 import com.example.uas_mad.R;
 import com.example.uas_mad.helper.SharedPreferenceHelper;
 import com.example.uas_mad.model.GameData;
-import com.example.uas_mad.model.Item;
-import com.example.uas_mad.model.ItemTerbeli;
 import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.model.Monster;
-import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
-import com.example.uas_mad.model.PertanyaanTerjawab;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -58,12 +52,11 @@ public class GameFragment extends Fragment {
 
     private GameViewModel gameViewModel;
     private SharedPreferenceHelper helper;
+
     private List<Pertanyaan.Data> listPertanyaan;
     private List<GameData.Gamedata> listGamedata;
-    private List<Item.Data> listItem;
     private List<Monster.Data> listMonster;
-    private List<PertanyaanTerjawab.Data> listTerjawab;
-    private List<ItemTerbeli.Data> listTerbeli;
+
     public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100;
     private boolean button_pressed = false;
     private CountDownTimer Timer;
@@ -142,25 +135,9 @@ public class GameFragment extends Fragment {
         gameViewModel.getPertanyaan();
         gameViewModel.getResultPertanyaan().observe(getActivity(), showPertanyaan);
 
-        //Item
-        gameViewModel.getItem();
-        gameViewModel.getResultItem().observe(getActivity(), showItem);
-
         //Monster
         gameViewModel.getMonster();
         gameViewModel.getResultMonster().observe(getActivity(), showMonster);
-
-        //Terbunuh
-        gameViewModel.getTerbunuh();
-        gameViewModel.getResultTerbunuh().observe(getActivity(), showTerbunuh);
-
-        //Terjawab
-        gameViewModel.getTerjawab();
-        gameViewModel.getResultTerjawab().observe(getActivity(), showTerjawab);
-
-        //Terbeli
-        gameViewModel.getTerbeli();
-        gameViewModel.getResultTerbeli().observe(getActivity(), showTerbeli);
 
         //Pause
         btn_pause.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +171,28 @@ public class GameFragment extends Fragment {
                     }
 
                     public void onFinish() {
-                        text_waktu.setText("done!");
+                        view_pause.setVisibility(View.VISIBLE);
+                        text_pertanyaan.setVisibility(View.INVISIBLE);
+                        btn_jawaban1.setVisibility(View.INVISIBLE);
+                        btn_jawaban2.setVisibility(View.INVISIBLE);
+                        btn_jawaban3.setVisibility(View.INVISIBLE);
+                        btn_jawaban4.setVisibility(View.INVISIBLE);
+                        btn_pause.setEnabled(false);
+                        text_warning.setVisibility(View.VISIBLE);
+                        text_warning.setText("Game Over Times UPPP!!!");
+
+                        Timer.cancel();
+
+                        Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
+                        gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
+                            final Handler handler3 = new Handler();
+                            handler3.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Navigation.findNavController(getView()).navigate(R.id.action_gameFragment_to_leaderboardFragment);
+                                }
+                            }, 5000);
+                        });
                     }
                 }.start();
 
@@ -294,6 +292,8 @@ public class GameFragment extends Fragment {
                     btn_pause.setEnabled(false);
                     text_warning.setVisibility(View.VISIBLE);
                     text_warning.setText("Game Over Times UPPP!!!");
+
+                    Timer.cancel();
 
                     Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
                     gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
@@ -497,7 +497,7 @@ public class GameFragment extends Fragment {
                             text_upgrade_info1.setText(String.valueOf(current_damage) + " -> " + String.valueOf(current_damage+15));
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
                             btn_buy1.setText("100");
-                            btn_buy2.setText("1000");
+                            btn_buy2.setText("200");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -521,7 +521,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money < 1000){
+                                    if (money < 200){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -529,7 +529,7 @@ public class GameFragment extends Fragment {
                                         }else{
                                             health_user += 1;
                                             health_bar_user.setRating(health_user);
-                                            money -= 1000;
+                                            money -= 200;
                                             text_money.setText(String.valueOf(money));
                                             btn_jawaban1.setVisibility(View.VISIBLE);
                                             btn_jawaban2.setVisibility(View.VISIBLE);
@@ -626,6 +626,8 @@ public class GameFragment extends Fragment {
                             btn_pause.setEnabled(false);
                             text_warning.setVisibility(View.VISIBLE);
                             text_warning.setText("Game Over U dead!!!");
+
+                            Timer.cancel();
 
                             Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
                             gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
@@ -817,7 +819,7 @@ public class GameFragment extends Fragment {
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
-                            btn_buy2.setText("1000");
+                            btn_buy2.setText("200");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -841,7 +843,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money < 1000){
+                                    if (money < 200){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -849,7 +851,7 @@ public class GameFragment extends Fragment {
                                         }else{
                                             health_user += 1;
                                             health_bar_user.setRating(health_user);
-                                            money -= 1000;
+                                            money -= 200;
                                             text_money.setText(String.valueOf(money));
                                             btn_jawaban1.setVisibility(View.VISIBLE);
                                             btn_jawaban2.setVisibility(View.VISIBLE);
@@ -944,6 +946,8 @@ public class GameFragment extends Fragment {
                             btn_pause.setEnabled(false);
                             text_warning.setVisibility(View.VISIBLE);
                             text_warning.setText("Game Over U dead!!!");
+
+                            Timer.cancel();
 
                             Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
                             gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
@@ -1135,7 +1139,7 @@ public class GameFragment extends Fragment {
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
-                            btn_buy2.setText("1000");
+                            btn_buy2.setText("200");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -1159,7 +1163,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money < 1000){
+                                    if (money < 200){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -1167,7 +1171,7 @@ public class GameFragment extends Fragment {
                                         }else{
                                             health_user += 1;
                                             health_bar_user.setRating(health_user);
-                                            money -= 1000;
+                                            money -= 200;
                                             text_money.setText(String.valueOf(money));
                                             btn_jawaban1.setVisibility(View.VISIBLE);
                                             btn_jawaban2.setVisibility(View.VISIBLE);
@@ -1261,6 +1265,8 @@ public class GameFragment extends Fragment {
                             btn_pause.setEnabled(false);
                             text_warning.setVisibility(View.VISIBLE);
                             text_warning.setText("Game Over U dead!!!");
+
+                            Timer.cancel();
 
                             Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
                             gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
@@ -1452,7 +1458,7 @@ public class GameFragment extends Fragment {
                             text_upgrade_info2.setText(String.valueOf(health_user) + " -> " + String.valueOf(health_user+1));
 
                             btn_buy1.setText("100");
-                            btn_buy2.setText("1000");
+                            btn_buy2.setText("200");
 
                             btn_buy1.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -1476,7 +1482,7 @@ public class GameFragment extends Fragment {
                             btn_buy2.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    if (money < 1000){
+                                    if (money < 200){
                                         Toast.makeText(getContext(), "Your Money is not Enough !", Toast.LENGTH_SHORT).show();
                                     }else{
                                         if(health_user == 3){
@@ -1484,7 +1490,7 @@ public class GameFragment extends Fragment {
                                         }else{
                                             health_user += 1;
                                             health_bar_user.setRating(health_user);
-                                            money -= 1000;
+                                            money -= 200;
                                             text_money.setText(String.valueOf(money));
                                             btn_jawaban1.setVisibility(View.VISIBLE);
                                             btn_jawaban2.setVisibility(View.VISIBLE);
@@ -1580,6 +1586,8 @@ public class GameFragment extends Fragment {
                             text_warning.setVisibility(View.VISIBLE);
                             text_warning.setText("Game Over U dead!!!");
 
+                            Timer.cancel();
+
                             Leaderboard.Data leaderboard = addLeaderboard(username, total_damage);
                             gameViewModel.createLeaderboard(leaderboard).observe(requireActivity(), leaderboard1->{
                                 final Handler handler3 = new Handler();
@@ -1630,13 +1638,6 @@ public class GameFragment extends Fragment {
         }
     };
 
-    //Observer Item
-    private Observer<Item> showItem = new Observer<Item>(){
-        @Override
-        public void onChanged(Item item) {
-//            text_damage.setText(item.getData().get(0).getItem_name());
-        }
-    };
 
     //Observer Monster
     public Observer<Monster> showMonster = new Observer<Monster>() {
@@ -1646,29 +1647,6 @@ public class GameFragment extends Fragment {
         }
     };
 
-    //Observer Terbunuh
-    public Observer<MonsterTerbunuh> showTerbunuh = new Observer<MonsterTerbunuh>() {
-        @Override
-        public void onChanged(MonsterTerbunuh monsterTerbunuh) {
-//            text_waktu.setText(String.valueOf(monsterTerbunuh.getData().get(0).getMonster_id_terbunuh()));
-        }
-    };
-
-    //Observer Terjawab
-    public Observer<PertanyaanTerjawab> showTerjawab = new Observer<PertanyaanTerjawab>() {
-        @Override
-        public void onChanged(PertanyaanTerjawab pertanyaanTerjawab) {
-//            btn_jawaban1.setText(String.valueOf(pertanyaanTerjawab.getData().get(0).getPertanyaan_id_terjawab()));
-        }
-    };
-
-    //Observer Terbeli
-    public Observer<ItemTerbeli> showTerbeli = new Observer<ItemTerbeli>() {
-        @Override
-        public void onChanged(ItemTerbeli itemTerbeli) {
-//            btn_jawaban2.setText(String.valueOf(itemTerbeli.getData().get(0).getHarga()));
-        }
-    };
 
     private Leaderboard.Data addLeaderboard(String username, int total_damage){
         Leaderboard.Data leaderboard = new Leaderboard.Data(username, total_damage);

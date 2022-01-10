@@ -12,7 +12,6 @@ import com.example.uas_mad.repositories.AuthRepository;
 public class LoginViewModel extends AndroidViewModel {
     private AuthRepository authRepository;
 
-
     public LoginViewModel(@NonNull Application application) {
         super(application);
         authRepository = AuthRepository.getInstance();

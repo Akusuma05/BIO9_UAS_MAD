@@ -28,6 +28,14 @@ public class PertanyaanRepository {
         return pertanyaanRepository;
     }
 
+    public synchronized void resetInstance(){
+        if(pertanyaanRepository != null){
+            pertanyaanRepository = null;
+        }else{
+            pertanyaanRepository = null;
+        }
+    }
+
     //Get Pertanyaan Buat di View Model
     public MutableLiveData<Pertanyaan> getPertanyaan(){
         final MutableLiveData<Pertanyaan> listPertanyaan = new MutableLiveData<>();

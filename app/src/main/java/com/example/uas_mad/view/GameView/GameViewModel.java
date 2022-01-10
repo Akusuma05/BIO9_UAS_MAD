@@ -9,31 +9,18 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.uas_mad.model.GameData;
-import com.example.uas_mad.model.Item;
-import com.example.uas_mad.model.ItemTerbeli;
 import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.model.Monster;
-import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
-import com.example.uas_mad.model.PertanyaanTerjawab;
 import com.example.uas_mad.repositories.GameDataRepository;
-import com.example.uas_mad.repositories.ItemRepository;
 import com.example.uas_mad.repositories.LeaderboardRepository;
 import com.example.uas_mad.repositories.MonsterRepository;
 import com.example.uas_mad.repositories.PertanyaanRepository;
-import com.example.uas_mad.repositories.ProfileRepository;
-import com.example.uas_mad.repositories.TerbeliRepository;
-import com.example.uas_mad.repositories.TerbunuhRepository;
-import com.example.uas_mad.repositories.TerjawabRepository;
 
 public class GameViewModel extends AndroidViewModel {
     private GameDataRepository gameDataRepository;
     private PertanyaanRepository pertanyaanRepository;
-    private ItemRepository itemRepository;
     private MonsterRepository monsterRepository;
-    private TerbeliRepository terbeliRepository;
-    private TerbunuhRepository terbunuhRepository;
-    private TerjawabRepository terjawabRepository;
     private LeaderboardRepository leaderboardRepository;
 
     private static final String TAG = "GameViewModel";
@@ -46,11 +33,7 @@ public class GameViewModel extends AndroidViewModel {
         Log.d(TAG, "init: "+token);
         gameDataRepository = GameDataRepository.getInstance(token);
         pertanyaanRepository = PertanyaanRepository.getInstance(token);
-        itemRepository = ItemRepository.getInstance(token);
         monsterRepository = MonsterRepository.getInstance(token);
-        terbeliRepository = TerbeliRepository.getInstance(token);
-        terbunuhRepository = TerbunuhRepository.getInstance(token);
-        terjawabRepository = TerjawabRepository.getInstance(token);
         leaderboardRepository = LeaderboardRepository.getInstance(token);
     }
 
@@ -68,30 +51,11 @@ public class GameViewModel extends AndroidViewModel {
     }
     public LiveData<Pertanyaan> getResultPertanyaan(){return resultPertanyaan;}
 
-    //View Model Get Item
-    public MutableLiveData<Item> resultItem = new MutableLiveData<>();
-    public void getItem(){resultItem = itemRepository.getItem();}
-    public LiveData<Item> getResultItem(){return resultItem;}
-
     //View Model Get Monster
     public MutableLiveData<Monster> resultMonster = new MutableLiveData<>();
     public void getMonster(){resultMonster = monsterRepository.getMonster();}
     public LiveData<Monster> getResultMonster(){return resultMonster;}
 
-    //View Model Get Terbeli
-    public MutableLiveData<ItemTerbeli> resultTerbeli = new MutableLiveData<>();
-    public void getTerbeli(){resultTerbeli = terbeliRepository.getTerbeli();}
-    public LiveData<ItemTerbeli> getResultTerbeli(){return resultTerbeli;}
-
-    //View Model Get Terbunuh
-    public MutableLiveData<MonsterTerbunuh> resultTerbunuh = new MutableLiveData<>();
-    public void getTerbunuh(){resultTerbunuh = terbunuhRepository.getTerbunuh();}
-    public LiveData<MonsterTerbunuh> getResultTerbunuh(){return resultTerbunuh;}
-
-    //View Model Get Terjawab
-    public MutableLiveData<PertanyaanTerjawab> resultTerjawab = new MutableLiveData<>();
-    public void getTerjawab(){resultTerjawab = terjawabRepository.getTerjawab();}
-    public LiveData<PertanyaanTerjawab> getResultTerjawab(){return resultTerjawab;}
 
     //Create Leaderboard
     public MutableLiveData<Leaderboard.Data> createLeaderboard(Leaderboard.Data leaderboard){
@@ -102,5 +66,8 @@ public class GameViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         gameDataRepository.resetInstance();
+        pertanyaanRepository.resetInstance();
+        monsterRepository.resetInstance();
+        leaderboardRepository.resetInstance();
     }
 }

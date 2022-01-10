@@ -4,8 +4,6 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.uas_mad.model.GameData;
-import com.example.uas_mad.model.Item;
 import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.retrofit.RetrofitService;
 

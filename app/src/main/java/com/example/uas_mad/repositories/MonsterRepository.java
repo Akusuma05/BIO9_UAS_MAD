@@ -28,6 +28,14 @@ public class MonsterRepository {
         return monsterRepository;
     }
 
+    public synchronized void resetInstance(){
+        if(monsterRepository != null){
+            monsterRepository = null;
+        }else{
+            monsterRepository = null;
+        }
+    }
+
     //Get Monster Buat di View Model
     public MutableLiveData<Monster> getMonster(){
         final MutableLiveData<Monster> listMonster = new MutableLiveData<>();

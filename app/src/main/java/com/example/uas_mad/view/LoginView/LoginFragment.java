@@ -99,6 +99,7 @@ public class LoginFragment extends Fragment {
 
         loginViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
         helper = SharedPreferenceHelper.getInstance(requireActivity());
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

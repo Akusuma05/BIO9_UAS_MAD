@@ -2,13 +2,9 @@ package com.example.uas_mad.retrofit;
 
 import com.example.uas_mad.helper.Const;
 import com.example.uas_mad.model.GameData;
-import com.example.uas_mad.model.Item;
-import com.example.uas_mad.model.ItemTerbeli;
 import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.model.Monster;
-import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
-import com.example.uas_mad.model.PertanyaanTerjawab;
 import com.example.uas_mad.model.Profile;
 import com.example.uas_mad.model.RegisterResponse;
 import com.example.uas_mad.model.TokenResponse;
@@ -19,7 +15,6 @@ import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
 
 public class RetrofitService {
     private final ApiEndPoints api;
@@ -86,20 +81,9 @@ public class RetrofitService {
     //Pertanyaan
     public Call<Pertanyaan> getPertanyaan(){return api.getPertanyaan();}
 
-    //Item
-    public Call<Item> getItem(){return api.getItem();}
 
     //Monster
     public Call<Monster> getMonster(){return api.getMonster();}
-
-    //Terbeli
-    public Call<ItemTerbeli> getTerbeli(){return api.getTerbeli();}
-
-    //Terbunuh
-    public Call<MonsterTerbunuh> getTerbunuh(){return api.getTerbunuh();}
-
-    //Terjawab
-    public Call<PertanyaanTerjawab> getTerjawab(){return api.getTerjawab();}
 
     //Create Game data
     public Call<GameData.Gamedata> createGamedata(GameData.Gamedata gamedata){return api.createGamedata(gamedata);}

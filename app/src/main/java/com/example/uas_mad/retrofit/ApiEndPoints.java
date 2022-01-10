@@ -1,13 +1,9 @@
 package com.example.uas_mad.retrofit;
 
 import com.example.uas_mad.model.GameData;
-import com.example.uas_mad.model.Item;
-import com.example.uas_mad.model.ItemTerbeli;
 import com.example.uas_mad.model.Leaderboard;
 import com.example.uas_mad.model.Monster;
-import com.example.uas_mad.model.MonsterTerbunuh;
 import com.example.uas_mad.model.Pertanyaan;
-import com.example.uas_mad.model.PertanyaanTerjawab;
 import com.example.uas_mad.model.Profile;
 import com.example.uas_mad.model.RegisterResponse;
 import com.example.uas_mad.model.TokenResponse;
@@ -19,7 +15,6 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiEndPoints {
@@ -53,25 +48,9 @@ public interface ApiEndPoints {
     @GET("pertanyaan")
     Call<Pertanyaan> getPertanyaan();
 
-    //Item
-    @GET("item")
-    Call<Item> getItem();
-
     //Monster
     @GET("monster")
     Call<Monster> getMonster();
-
-    //Terbeli
-    @GET("terbeli")
-    Call<ItemTerbeli> getTerbeli();
-
-    //Terbunuh
-    @GET("terbunuh")
-    Call<MonsterTerbunuh> getTerbunuh();
-
-    //Terjawab
-    @GET("terjawab")
-    Call<PertanyaanTerjawab> getTerjawab();
 
     //Create Game Data
     @POST("gamedata")
