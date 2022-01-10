@@ -49,17 +49,17 @@ public class GameData implements Parcelable {
     }
 
     public static class Gamedata {
-        private int student_gamedata_id;
-        private int student_id_gamedata;
+        private int gamedata_id;
+        private int student_id;
         private int total_damage;
         private int health_left;
         private int money;
         private int time_left;
         private int current_damage;
 
-        public Gamedata(int student_gamedata_id, int student_id_gamedata, int total_damage, int health_left, int money, int time_left, int current_damage) {
-            this.student_gamedata_id = student_gamedata_id;
-            this.student_id_gamedata = student_id_gamedata;
+        public Gamedata(int gamedata_id, int student_id, int total_damage, int health_left, int money, int time_left, int current_damage) {
+            this.gamedata_id = gamedata_id;
+            this.student_id = student_id;
             this.total_damage = total_damage;
             this.health_left = health_left;
             this.money = money;
@@ -72,20 +72,20 @@ public class GameData implements Parcelable {
             return new Gson().fromJson(str, Gamedata.class);
         }
 
-        public int getStudent_gamedata_id() {
-            return student_gamedata_id;
+        public int getGamedata_id() {
+            return gamedata_id;
         }
 
-        public void setStudent_gamedata_id(int student_gamedata_id) {
-            this.student_gamedata_id = student_gamedata_id;
+        public void setGamedata_id(int gamedata_id) {
+            this.gamedata_id = gamedata_id;
         }
 
-        public int getStudent_id_gamedata() {
-            return student_id_gamedata;
+        public int getStudent_id() {
+            return student_id;
         }
 
-        public void setStudent_id_gamedata(int student_id_gamedata) {
-            this.student_id_gamedata = student_id_gamedata;
+        public void setStudent_id(int student_id) {
+            this.student_id = student_id;
         }
 
         public int getTotal_damage() {

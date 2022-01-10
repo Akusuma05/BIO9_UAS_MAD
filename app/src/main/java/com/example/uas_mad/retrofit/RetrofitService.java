@@ -3,7 +3,6 @@ package com.example.uas_mad.retrofit;
 import com.example.uas_mad.helper.Const;
 import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Leaderboard;
-import com.example.uas_mad.model.Monster;
 import com.example.uas_mad.model.Pertanyaan;
 import com.example.uas_mad.model.Profile;
 import com.example.uas_mad.model.RegisterResponse;
@@ -80,10 +79,6 @@ public class RetrofitService {
 
     //Pertanyaan
     public Call<Pertanyaan> getPertanyaan(){return api.getPertanyaan();}
-
-
-    //Monster
-    public Call<Monster> getMonster(){return api.getMonster();}
 
     //Create Game data
     public Call<GameData.Gamedata> createGamedata(GameData.Gamedata gamedata){return api.createGamedata(gamedata);}

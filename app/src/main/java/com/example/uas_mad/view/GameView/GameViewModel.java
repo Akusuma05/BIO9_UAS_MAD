@@ -10,17 +10,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Leaderboard;
-import com.example.uas_mad.model.Monster;
 import com.example.uas_mad.model.Pertanyaan;
 import com.example.uas_mad.repositories.GameDataRepository;
 import com.example.uas_mad.repositories.LeaderboardRepository;
-import com.example.uas_mad.repositories.MonsterRepository;
 import com.example.uas_mad.repositories.PertanyaanRepository;
 
 public class GameViewModel extends AndroidViewModel {
     private GameDataRepository gameDataRepository;
     private PertanyaanRepository pertanyaanRepository;
-    private MonsterRepository monsterRepository;
     private LeaderboardRepository leaderboardRepository;
 
     private static final String TAG = "GameViewModel";
@@ -33,7 +30,6 @@ public class GameViewModel extends AndroidViewModel {
         Log.d(TAG, "init: "+token);
         gameDataRepository = GameDataRepository.getInstance(token);
         pertanyaanRepository = PertanyaanRepository.getInstance(token);
-        monsterRepository = MonsterRepository.getInstance(token);
         leaderboardRepository = LeaderboardRepository.getInstance(token);
     }
 
@@ -51,11 +47,6 @@ public class GameViewModel extends AndroidViewModel {
     }
     public LiveData<Pertanyaan> getResultPertanyaan(){return resultPertanyaan;}
 
-    //View Model Get Monster
-    public MutableLiveData<Monster> resultMonster = new MutableLiveData<>();
-    public void getMonster(){resultMonster = monsterRepository.getMonster();}
-    public LiveData<Monster> getResultMonster(){return resultMonster;}
-
 
     //Create Leaderboard
     public MutableLiveData<Leaderboard.Data> createLeaderboard(Leaderboard.Data leaderboard){
@@ -67,7 +58,6 @@ public class GameViewModel extends AndroidViewModel {
         super.onCleared();
         gameDataRepository.resetInstance();
         pertanyaanRepository.resetInstance();
-        monsterRepository.resetInstance();
         leaderboardRepository.resetInstance();
     }
 }

@@ -26,7 +26,6 @@ import com.example.uas_mad.R;
 import com.example.uas_mad.helper.SharedPreferenceHelper;
 import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Leaderboard;
-import com.example.uas_mad.model.Monster;
 import com.example.uas_mad.model.Pertanyaan;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -55,7 +54,6 @@ public class GameFragment extends Fragment {
 
     private List<Pertanyaan.Data> listPertanyaan;
     private List<GameData.Gamedata> listGamedata;
-    private List<Monster.Data> listMonster;
 
     public int waktu, random, monster = 1, health_monster = 100, health_user, current_damage, total_damage, money, current_health_monster = 100;
     private boolean button_pressed = false;
@@ -135,9 +133,6 @@ public class GameFragment extends Fragment {
         gameViewModel.getPertanyaan();
         gameViewModel.getResultPertanyaan().observe(getActivity(), showPertanyaan);
 
-        //Monster
-        gameViewModel.getMonster();
-        gameViewModel.getResultMonster().observe(getActivity(), showMonster);
 
         //Pause
         btn_pause.setOnClickListener(new View.OnClickListener() {
@@ -274,6 +269,7 @@ public class GameFragment extends Fragment {
 
             //CountDownTimer
             waktu = listGamedata.get(0).getTime_left();
+            waktu = waktu*1000;
             Timer = new CountDownTimer(waktu, 1000) {
                 public void onTick(long millisUntilFinished) {
                     text_waktu.setText(""+String.format("%d min, %d sec",
@@ -1635,15 +1631,6 @@ public class GameFragment extends Fragment {
                     }
                 }
             });
-        }
-    };
-
-
-    //Observer Monster
-    public Observer<Monster> showMonster = new Observer<Monster>() {
-        @Override
-        public void onChanged(Monster monster) {
-//            text_money.setText(monster.getData().get(0).getMonster_name());
         }
     };
 

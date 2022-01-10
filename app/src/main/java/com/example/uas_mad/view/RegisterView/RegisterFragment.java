@@ -171,7 +171,7 @@ public class RegisterFragment extends Fragment {
         @Override
         public void onChanged(Profile profile) {
                 //Add New Game data
-                GameData.Gamedata gamedata = addGamedata(profile.getId(), profile.getId(), 0 , 3, 0, 600000, 20);
+                GameData.Gamedata gamedata = addGamedata(profile.getId(), profile.getId(), 0 , 3, 0, 600, 20);
                 registerViewModel.createGamedata(gamedata).observe(requireActivity(), gamedata1 -> {
 
                 //Logout

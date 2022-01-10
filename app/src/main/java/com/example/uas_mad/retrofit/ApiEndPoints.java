@@ -2,7 +2,6 @@ package com.example.uas_mad.retrofit;
 
 import com.example.uas_mad.model.GameData;
 import com.example.uas_mad.model.Leaderboard;
-import com.example.uas_mad.model.Monster;
 import com.example.uas_mad.model.Pertanyaan;
 import com.example.uas_mad.model.Profile;
 import com.example.uas_mad.model.RegisterResponse;
@@ -47,10 +46,6 @@ public interface ApiEndPoints {
     //Pertanyaan
     @GET("pertanyaan")
     Call<Pertanyaan> getPertanyaan();
-
-    //Monster
-    @GET("monster")
-    Call<Monster> getMonster();
 
     //Create Game Data
     @POST("gamedata")
